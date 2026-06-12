@@ -1,0 +1,68 @@
+{% comment %}
+  House of Clarence — Hero banner (prd.md §8.1)
+  Full-bleed lifestyle image, mono eyebrow, serif statement, one quiet CTA.
+  The image settles (subtle scale-down) and the headline fades up once on load.
+{% endcomment %}
+
+<section class="hoc-hero-banner">
+  <div class="hoc-hero-banner__media">
+    {%- if section.settings.image != blank -%}
+      {%- comment %} A theme-editor image takes priority (gets responsive srcset). {% endcomment -%}
+      <img
+        src="{{ section.settings.image | image_url: width: 2200 }}"
+        srcset="
+          {{ section.settings.image | image_url: width: 750 }} 750w,
+          {{ section.settings.image | image_url: width: 1100 }} 1100w,
+          {{ section.settings.image | image_url: width: 1600 }} 1600w,
+          {{ section.settings.image | image_url: width: 2200 }} 2200w
+        "
+        sizes="100vw"
+        alt="{{ section.settings.image.alt | escape }}"
+        width="{{ section.settings.image.width }}"
+        height="{{ section.settings.image.height }}"
+        fetchpriority="high"
+      >
+    {%- elsif section.settings.default_image_filename != blank -%}
+      {%- comment %} Fallback to an image bundled in /assets (e.g. for the proof of concept). {% endcomment -%}
+      <img
+        src="{{ section.settings.default_image_filename | asset_url }}"
+        alt="{{ section.settings.default_image_alt | escape }}"
+        width="2560"
+        height="1920"
+        fetchpriority="high"
+      >
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder' }}
+    {%- endif -%}
+  </div>
+
+  <div class="hoc-hero-banner__content">
+    {%- if section.settings.eyebrow != blank -%}
+      <span class="hoc-eyebrow hoc-hero-banner__eyebrow">{{ section.settings.eyebrow }}</span>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h1 class="hoc-hero hoc-hero-banner__title">{{ section.settings.heading }}</h1>
+    {%- endif -%}
+    {%- if section.settings.button_label != blank -%}
+      <a href="{{ section.settings.button_link | default: routes.root_url }}" class="hoc-btn hoc-btn--primary">
+        {{ section.settings.button_label }}
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero banner",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Background image", "info": "Recommended for production (gives responsive images). Overrides the bundled image below." },
+    { "type": "text", "id": "default_image_filename", "label": "Bundled image filename (in /assets)", "default": "hoc-hero-kitchen.jpg", "info": "Used when no Background image is chosen above." },
+    { "type": "text", "id": "default_image_alt", "label": "Bundled image alt text", "default": "A calm, light-filled kitchen with a marble island and brass-detailed bar stools" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow (small label)", "default": "For the curated home" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Made to be lived in." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Explore the rooms" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "Hero banner" }]
+}
+{% endschema %}

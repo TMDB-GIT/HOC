@@ -1,0 +1,52 @@
+{% comment %}
+  House of Clarence — CTA band (prd.md §8.1)
+  An understated invitation (e.g. for trade / designers). Quiet, sage register —
+  no urgency, no discount theatrics.
+{% endcomment %}
+
+<section class="hoc-ctaband {% if section.settings.surface == 'sage' %}hoc-surface-sage{% elsif section.settings.surface == 'ink' %}hoc-surface-ink{% elsif section.settings.surface == 'paper' %}hoc-surface-paper{% endif %}">
+  <div class="hoc-container">
+    <div class="hoc-ctaband__inner">
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="hoc-eyebrow">{{ section.settings.eyebrow }}</span>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="hoc-h1 hoc-ctaband__title">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <p class="hoc-body-l" style="max-width: 48ch;">{{ section.settings.text }}</p>
+      {%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <a href="{{ section.settings.button_link | default: routes.root_url }}" class="hoc-btn hoc-btn--secondary">
+          {{ section.settings.button_label }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "CTA band",
+  "settings": [
+    {
+      "type": "select",
+      "id": "surface",
+      "label": "Background",
+      "options": [
+        { "value": "canvas", "label": "Canvas" },
+        { "value": "paper", "label": "Paper" },
+        { "value": "sage", "label": "Sage (default)" },
+        { "value": "ink", "label": "Ink" }
+      ],
+      "default": "sage"
+    },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Trade" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "For designers, architects & builders" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Trade pricing, spec downloads and a dedicated contact. Join the House of Clarence trade programme." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Discover trade" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "CTA band" }]
+}
+{% endschema %}

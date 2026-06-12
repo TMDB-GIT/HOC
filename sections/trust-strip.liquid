@@ -1,0 +1,59 @@
+{% comment %}
+  House of Clarence — Trust strip (prd.md §6)
+  A slim band of quiet reassurances. This deliberately REPLACES the usual
+  "FREE SHIPPING / SALE NOW ON" bar. Calm proof, not promotion.
+  Each reassurance is a block (icon + short label).
+{% endcomment %}
+
+<section class="hoc-trust">
+  <div class="hoc-container">
+    <div class="hoc-trust__row">
+      {%- for block in section.blocks -%}
+        {%- unless forloop.first %}<span class="hoc-trust__sep" aria-hidden="true"></span>{% endunless -%}
+        <span class="hoc-trust__item" {{ block.shopify_attributes }}>
+          {% render 'hoc-icon', name: block.settings.icon %}
+          {{ block.settings.text }}
+        </span>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Trust strip",
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Reassurance",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "handshake", "label": "Handshake" },
+            { "value": "delivery", "label": "Delivery" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "architecture", "label": "Architecture" },
+            { "value": "leaf", "label": "Leaf" }
+          ],
+          "default": "handshake"
+        },
+        { "type": "text", "id": "text", "label": "Text", "default": "Trade & private clients" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Trust strip",
+      "blocks": [
+        { "type": "item", "settings": { "icon": "handshake", "text": "Trade & private clients" } },
+        { "type": "item", "settings": { "icon": "delivery", "text": "White-glove delivery" } },
+        { "type": "item", "settings": { "icon": "shield", "text": "Considered guarantees" } },
+        { "type": "item", "settings": { "icon": "architecture", "text": "Sister to Market Design & Build" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

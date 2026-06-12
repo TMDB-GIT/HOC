@@ -1,0 +1,55 @@
+{% comment %}
+  House of Clarence — Page header (reusable)
+  Centred editorial header: eyebrow + serif title + intro, with an optional
+  full-bleed image beneath. Used by About, Trade, Contact and any content page.
+{% endcomment %}
+
+<header class="hoc-section--tight hoc-pageheader">
+  <div class="hoc-container hoc-pageheader__intro">
+    {%- if section.settings.eyebrow != blank -%}
+      <span class="hoc-eyebrow">{{ section.settings.eyebrow }}</span>
+    {%- endif -%}
+    <h1 class="hoc-h1 hoc-pageheader__title">{{ section.settings.heading | default: page.title }}</h1>
+    {%- if section.settings.intro != blank -%}
+      <p class="hoc-body-l hoc-pageheader__text">{{ section.settings.intro }}</p>
+    {%- endif -%}
+  </div>
+
+  {%- if section.settings.image != blank -%}
+    <div class="hoc-container hoc-pageheader__media">
+      <img
+        src="{{ section.settings.image | image_url: width: 2000 }}"
+        srcset="{{ section.settings.image | image_url: width: 800 }} 800w, {{ section.settings.image | image_url: width: 1400 }} 1400w, {{ section.settings.image | image_url: width: 2000 }} 2000w"
+        sizes="100vw"
+        alt="{{ section.settings.image.alt | escape }}"
+        width="{{ section.settings.image.width }}"
+        height="{{ section.settings.image.height }}"
+      >
+    </div>
+  {%- elsif section.settings.default_image_filename != blank -%}
+    {%- comment %} Fallback to an image bundled in /assets (placeholder until client photography). {% endcomment -%}
+    <div class="hoc-container hoc-pageheader__media">
+      <img
+        src="{{ section.settings.default_image_filename | asset_url }}"
+        alt="{{ section.settings.default_image_alt | escape }}"
+        width="2000"
+        height="1125"
+      >
+    </div>
+  {%- endif -%}
+</header>
+
+{% schema %}
+{
+  "name": "Page header",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The House" },
+    { "type": "text", "id": "heading", "label": "Heading", "info": "Defaults to the page title." },
+    { "type": "textarea", "id": "intro", "label": "Intro" },
+    { "type": "image_picker", "id": "image", "label": "Image (optional)" },
+    { "type": "text", "id": "default_image_filename", "label": "Bundled image filename (in /assets)", "info": "Used when no Image is chosen above." },
+    { "type": "text", "id": "default_image_alt", "label": "Bundled image alt text" }
+  ],
+  "presets": [{ "name": "Page header" }]
+}
+{% endschema %}

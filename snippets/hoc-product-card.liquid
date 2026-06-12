@@ -1,0 +1,109 @@
+{% comment %}
+  House of Clarence — product card (prd.md §6)
+  A quiet specimen card: image (4:5), serif title, the Specimen Label caption
+  (material · finish / price), and a hover crossfade to a second image.
+  No sale badge — ever. If a product is reduced, the price snippet shows the
+  lower figure plainly.
+
+  Parameters:
+    product (required) — a Shopify product object
+    layout  (optional) — 'featured' (title then caption, default)
+                         | 'collection' (caption then title)
+                         | 'pairs' (caption, then title + price in a row)
+    show_save (optional) — show the ideabook bookmark, default true
+    show_exvat (optional) — show ex-VAT on the price, default false
+
+  Specimen metadata is read from product metafields (set these in Shopify
+  admin → product → Metafields): custom.material, custom.finish.
+  Falls back to product.type when metafields are empty.
+{% endcomment %}
+
+{%- liquid
+  assign layout = layout | default: 'featured'
+  assign show_save = show_save | default: true, allow_false: true
+  assign show_exvat = show_exvat | default: false, allow_false: true
+
+  assign primary = product.featured_media
+  assign secondary = product.media[1]
+-%}
+
+<a href="{{ product.url }}" class="hoc-card hoc-card--{{ layout }}{% if layout == 'collection' %} hoc-card--caption-top{% endif %}">
+  <div class="hoc-card__media">
+    {%- if primary -%}
+      <img
+        class="hoc-card__img--primary"
+        src="{{ primary | image_url: width: 600 }}"
+        srcset="
+          {{ primary | image_url: width: 300 }} 300w,
+          {{ primary | image_url: width: 450 }} 450w,
+          {{ primary | image_url: width: 600 }} 600w,
+          {{ primary | image_url: width: 900 }} 900w
+        "
+        sizes="(min-width: 1024px) 22vw, (min-width: 600px) 45vw, 90vw"
+        alt="{{ primary.alt | default: product.title | escape }}"
+        width="{{ primary.width }}"
+        height="{{ primary.height }}"
+        loading="lazy"
+      >
+    {%- else -%}
+      {{ 'product-1' | placeholder_svg_tag: 'hoc-card__img--primary' }}
+    {%- endif -%}
+
+    {%- if secondary -%}
+      <img
+        class="hoc-card__img--secondary"
+        src="{{ secondary | image_url: width: 600 }}"
+        srcset="
+          {{ secondary | image_url: width: 300 }} 300w,
+          {{ secondary | image_url: width: 600 }} 600w,
+          {{ secondary | image_url: width: 900 }} 900w
+        "
+        sizes="(min-width: 1024px) 22vw, (min-width: 600px) 45vw, 90vw"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        width="{{ secondary.width }}"
+        height="{{ secondary.height }}"
+      >
+    {%- endif -%}
+
+    {%- if show_save -%}
+      <button
+        type="button"
+        class="hoc-card__save"
+        aria-label="Save {{ product.title | escape }} to ideabook"
+        data-hoc-save
+        data-product-id="{{ product.id }}"
+      >
+        {% render 'hoc-icon', name: 'ideabook' %}
+      </button>
+    {%- endif -%}
+  </div>
+
+  {%- comment %} Text block, ordered per layout {% endcomment -%}
+  {%- if layout == 'collection' -%}
+    <span class="hoc-specimen hoc-card__caption">
+      {% render 'hoc-specimen-meta', product: product %}
+      <span class="hoc-specimen__sep">/</span>
+      {% render 'hoc-price', price: product.price, compare_at: product.compare_at_price %}
+    </span>
+    <h3 class="hoc-card__title">{{ product.title }}</h3>
+
+  {%- elsif layout == 'pairs' -%}
+    <div class="hoc-card__row">
+      <div>
+        <span class="hoc-specimen hoc-card__caption">{% render 'hoc-specimen-meta', product: product %}</span>
+        <h3 class="hoc-card__title">{{ product.title }}</h3>
+      </div>
+      <span class="hoc-body">{% render 'hoc-price', price: product.price, compare_at: product.compare_at_price %}</span>
+    </div>
+
+  {%- else -%}
+    <h3 class="hoc-card__title">{{ product.title }}</h3>
+    <span class="hoc-specimen hoc-card__caption">
+      {% render 'hoc-specimen-meta', product: product %}
+      <span class="hoc-specimen__sep">/</span>
+      {% render 'hoc-price', price: product.price, compare_at: product.compare_at_price, show_exvat: show_exvat %}
+    </span>
+  {%- endif -%}
+</a>

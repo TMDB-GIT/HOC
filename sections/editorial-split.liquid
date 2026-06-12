@@ -1,0 +1,91 @@
+{% comment %}
+  House of Clarence — Editorial split (prd.md §8.1)
+  A split block: a macro material shot beside short, material-led copy.
+  This is the wabi-sabi / craft moment. Image side is configurable.
+{% endcomment %}
+
+<section class="hoc-section {% if section.settings.surface == 'paper' %}hoc-surface-paper{% elsif section.settings.surface == 'sage' %}hoc-surface-sage{% endif %}">
+  <div class="hoc-container">
+    <div class="hoc-split{% if section.settings.image_position == 'right' %} hoc-split--reverse{% endif %}">
+      <div class="hoc-split__media">
+        {%- if section.settings.image != blank -%}
+          <img
+            src="{{ section.settings.image | image_url: width: 1200 }}"
+            srcset="{{ section.settings.image | image_url: width: 600 }} 600w, {{ section.settings.image | image_url: width: 1200 }} 1200w, {{ section.settings.image | image_url: width: 1600 }} 1600w"
+            sizes="(min-width: 768px) 55vw, 100vw"
+            alt="{{ section.settings.image.alt | escape }}"
+            loading="lazy"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+          >
+        {%- elsif section.settings.default_image_filename != blank -%}
+          {%- comment %} Fallback to an image bundled in /assets (placeholder until client photography). {% endcomment -%}
+          <img
+            src="{{ section.settings.default_image_filename | asset_url }}"
+            alt="{{ section.settings.default_image_alt | escape }}"
+            loading="lazy"
+            width="1600"
+            height="1200"
+          >
+        {%- else -%}
+          {{ 'detailed-apparel-1' | placeholder_svg_tag: 'placeholder' }}
+        {%- endif -%}
+      </div>
+
+      <div class="hoc-split__body">
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="hoc-eyebrow">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="hoc-h1 hoc-split__title">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.text != blank -%}
+          <div class="hoc-body-l hoc-split__text">{{ section.settings.text }}</div>
+        {%- endif -%}
+        {%- if section.settings.button_label != blank -%}
+          <a href="{{ section.settings.button_link | default: routes.root_url }}" class="hoc-btn hoc-btn--secondary">
+            {{ section.settings.button_label }}
+          </a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Editorial split",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "A macro material shot works best (marble veining, oak grain, brass patina)." },
+    { "type": "text", "id": "default_image_filename", "label": "Bundled image filename (in /assets)", "info": "Used when no Image is chosen above." },
+    { "type": "text", "id": "default_image_alt", "label": "Bundled image alt text" },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "surface",
+      "label": "Background",
+      "options": [
+        { "value": "canvas", "label": "Canvas (default)" },
+        { "value": "paper", "label": "Paper" },
+        { "value": "sage", "label": "Sage (drama)" }
+      ],
+      "default": "paper"
+    },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The philosophy" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Material honesty" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>We believe true luxury lies in the provenance and intrinsic qualities of the materials themselves. Every grain of timber, every vein in the stone, every patina on unlacquered brass tells a story. We design not to obscure these imperfections, but to frame them.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Read the manifesto" },
+    { "type": "url", "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "Editorial split" }]
+}
+{% endschema %}

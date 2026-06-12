@@ -1,0 +1,75 @@
+{% comment %}
+  House of Clarence — Contact / "Discuss a project" form (prd.md §8.7)
+  Uses Shopify's built-in contact form (emails the store owner). Calm, warm,
+  with optional contact details (phone, email, hours) alongside.
+{% endcomment %}
+
+<section class="hoc-section">
+  <div class="hoc-container hoc-contact">
+    <div class="hoc-contact__details">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="hoc-h2">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.intro != blank -%}
+        <p class="hoc-body-l hoc-contact__intro">{{ section.settings.intro }}</p>
+      {%- endif -%}
+      <dl class="hoc-contact__list">
+        {%- if section.settings.phone != blank -%}
+          <div><dt class="hoc-eyebrow">Telephone</dt><dd class="hoc-body">{{ section.settings.phone }}</dd></div>
+        {%- endif -%}
+        {%- if section.settings.email != blank -%}
+          <div><dt class="hoc-eyebrow">Email</dt><dd class="hoc-body"><a class="hoc-link" href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a></dd></div>
+        {%- endif -%}
+        {%- if section.settings.hours != blank -%}
+          <div><dt class="hoc-eyebrow">Hours</dt><dd class="hoc-body">{{ section.settings.hours }}</dd></div>
+        {%- endif -%}
+      </dl>
+    </div>
+
+    <div class="hoc-contact__form">
+      {%- assign form_id = 'hoc-contact' -%}
+      {% form 'contact', id: form_id %}
+        {%- if form.posted_successfully? -%}
+          <p class="hoc-form__success">Thank you — we’ll be in touch shortly.</p>
+        {%- elsif form.errors -%}
+          <p class="hoc-form__error">{{ form.errors | default_errors }}</p>
+        {%- endif -%}
+
+        <div class="hoc-form__row">
+          <div class="hoc-field">
+            <label for="{{ form_id }}-name">Name</label>
+            <input id="{{ form_id }}-name" type="text" name="contact[name]" value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}" required>
+          </div>
+          <div class="hoc-field">
+            <label for="{{ form_id }}-email">Email</label>
+            <input id="{{ form_id }}-email" type="email" name="contact[email]" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" autocorrect="off" autocapitalize="off" required>
+          </div>
+        </div>
+        <div class="hoc-field">
+          <label for="{{ form_id }}-phone">Telephone (optional)</label>
+          <input id="{{ form_id }}-phone" type="tel" name="contact[phone]" value="{% if form.phone %}{{ form.phone }}{% endif %}">
+        </div>
+        <div class="hoc-field">
+          <label for="{{ form_id }}-body">How can we help with your project?</label>
+          <textarea id="{{ form_id }}-body" name="contact[body]" required>{% if form.body %}{{ form.body }}{% endif %}</textarea>
+        </div>
+        <button type="submit" class="hoc-btn hoc-btn--primary">{{ section.settings.button_label | default: 'Send enquiry' }}</button>
+      {% endform %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Contact form",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Discuss a project" },
+    { "type": "textarea", "id": "intro", "label": "Intro", "default": "Tell us what you are building or renovating. Our team will help you specify the right pieces — for private clients and trade alike." },
+    { "type": "text", "id": "phone", "label": "Telephone" },
+    { "type": "text", "id": "email", "label": "Email" },
+    { "type": "text", "id": "hours", "label": "Hours" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Send enquiry" }
+  ],
+  "presets": [{ "name": "Contact form" }]
+}
+{% endschema %}

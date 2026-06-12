@@ -15,6 +15,15 @@
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
     {%- endunless -%}
 
+    {%- comment %} House of Clarence webfonts (Google Fonts). Two weights per family. {% endcomment -%}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500&family=IBM+Plex+Mono:wght@500&family=Newsreader:opsz,wght@6..72,400&display=swap"
+    >
+
+
     <title>
       {{ page_title }}
       {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
@@ -256,6 +265,43 @@
     {% endstyle %}
 
     {{ 'base.css' | asset_url | stylesheet_tag }}
+
+    {%- comment %} House of Clarence design layer — loaded AFTER base.css so it wins. {% endcomment -%}
+    {{ 'hoc-base.css' | asset_url | stylesheet_tag }}
+    {{ 'hoc-type.css' | asset_url | stylesheet_tag }}
+    {{ 'hoc-components.css' | asset_url | stylesheet_tag }}
+    {{ 'hoc-shop.css' | asset_url | stylesheet_tag }}
+
+    {%- comment %} Merchant-editable palette → overrides the CSS defaults above. {% endcomment -%}
+    {% style %}
+      :root {
+        --hoc-canvas: {{ settings.hoc_canvas }};
+        --hoc-paper: {{ settings.hoc_paper }};
+        --hoc-ink: {{ settings.hoc_ink }};
+        --hoc-ink-strong: {{ settings.hoc_ink_strong }};
+        --hoc-sage: {{ settings.hoc_sage }};
+        --hoc-sage-soft: {{ settings.hoc_sage | color_lighten: 8 }};
+        --hoc-brass: {{ settings.hoc_brass }};
+        --hoc-brass-deep: {{ settings.hoc_brass | color_darken: 12 }};
+        --hoc-stone-line: {{ settings.hoc_stone_line }};
+        --hoc-footer-bg: {{ settings.hoc_footer_bg }};
+        --color-background: {{ settings.hoc_canvas.red }}, {{ settings.hoc_canvas.green }}, {{ settings.hoc_canvas.blue }};
+        --color-foreground: {{ settings.hoc_ink.red }}, {{ settings.hoc_ink.green }}, {{ settings.hoc_ink.blue }};
+      }
+    {% endstyle %}
+
+    {%- comment %} Enable scroll-reveal only when motion is allowed (no flash for reduced-motion / no-JS). {% endcomment -%}
+    <script>
+      (function () {
+        try {
+          if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+            document.documentElement.classList.add('hoc-anim');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <script src="{{ 'hoc-reveal.js' | asset_url }}" defer="defer"></script>
+
     <link rel="stylesheet" href="{{ 'component-cart-items.css' | asset_url }}" media="print" onload="this.media='all'">
 
     {%- if settings.cart_type == 'drawer' -%}
@@ -303,9 +349,10 @@
       {{ 'accessibility.skip_to_text' | t }}
     </a>
 
-    {%- if settings.cart_type == 'drawer' -%}
-      {%- render 'cart-drawer' -%}
-    {%- endif -%}
+    {% comment %} House of Clarence "Your bag" drawer — rendered as a section so
+       AJAX updates can re-render it via the Section Rendering API. {% endcomment %}
+    {% section 'hoc-cart-drawer' %}
+    {% section 'hoc-search-drawer' %}
 
     {% sections 'header-group' %}
 
@@ -369,8 +416,7 @@
       <script src="{{ 'predictive-search.js' | asset_url }}" defer="defer"></script>
     {%- endif -%}
 
-    {%- if settings.cart_type == 'drawer' -%}
-      <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
-    {%- endif -%}
+    <script src="{{ 'hoc-cart.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'hoc-search.js' | asset_url }}" defer="defer"></script>
   </body>
 </html>

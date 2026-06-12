@@ -1,0 +1,100 @@
+{% comment %}
+  House of Clarence — Specimen block (prd.md §4.7)
+  The signature spec-sheet on the product page. Rows are shown only when a
+  value exists. Values come from metafields where set, otherwise sensible
+  fallbacks from the product's real data (tags, type, SKU, variant option).
+
+  Parameters:
+    product (required)
+    variant (optional) — the currently selected variant (for SKU/dimensions)
+    lead_time_default (optional) — fallback lead-time text
+{% endcomment %}
+
+{%- liquid
+  assign v = variant | default: product.selected_or_first_available_variant
+  assign mf = product.metafields.custom
+
+  assign material = mf.material.value
+  assign finish = mf.finish.value
+  # Derive material/finish from tags if no metafields
+  if material == blank
+    for t in product.tags
+      assign tl = t | downcase
+      unless tl contains 'catalogue' or tl contains 'code:'
+        assign material = t
+        break
+      endunless
+    endfor
+  endif
+
+  assign dimensions = mf.dimensions.value
+  if dimensions == blank and v.title != 'Default Title'
+    assign dimensions = v.title
+  endif
+
+  assign weight_kg = ''
+  if v.weight > 0
+    assign weight_kg = v.weight | divided_by: 1000.0 | round: 1 | append: ' kg'
+  endif
+-%}
+
+<dl class="hoc-specimen-block">
+  {%- if material != blank -%}
+    <div class="hoc-specimen-block__row">
+      <dt class="hoc-eyebrow">Material</dt>
+      <dd class="hoc-body">{{ material }}{% if finish != blank %} / {{ finish }}{% endif %}</dd>
+    </div>
+  {%- endif -%}
+
+  {%- if mf.origin.value != blank -%}
+    <div class="hoc-specimen-block__row">
+      <dt class="hoc-eyebrow">Origin</dt>
+      <dd class="hoc-body">{{ mf.origin.value }}</dd>
+    </div>
+  {%- endif -%}
+
+  {%- if dimensions != blank -%}
+    <div class="hoc-specimen-block__row">
+      <dt class="hoc-eyebrow">Dimensions</dt>
+      <dd class="hoc-body">{{ dimensions }}</dd>
+    </div>
+  {%- endif -%}
+
+  {%- if weight_kg != blank -%}
+    <div class="hoc-specimen-block__row">
+      <dt class="hoc-eyebrow">Weight</dt>
+      <dd class="hoc-body">{{ weight_kg }}</dd>
+    </div>
+  {%- endif -%}
+
+  <div class="hoc-specimen-block__row">
+    <dt class="hoc-eyebrow">Type</dt>
+    <dd class="hoc-body">{{ product.type | default: 'Furnishing' }}</dd>
+  </div>
+
+  {%- if v.sku != blank -%}
+    <div class="hoc-specimen-block__row">
+      <dt class="hoc-eyebrow">Reference</dt>
+      <dd class="hoc-body">{{ v.sku }}</dd>
+    </div>
+  {%- endif -%}
+
+  <div class="hoc-specimen-block__row">
+    <dt class="hoc-eyebrow">Lead time</dt>
+    <dd class="hoc-body">{{ mf.lead_time.value | default: lead_time_default | default: 'Made to order. Estimated 6–8 weeks.' }}</dd>
+  </div>
+
+  {%- if mf.care.value != blank -%}
+    <div class="hoc-specimen-block__row">
+      <dt class="hoc-eyebrow">Care</dt>
+      <dd class="hoc-body">{{ mf.care.value }}</dd>
+    </div>
+  {%- endif -%}
+
+  {%- if mf.guarantee.value != blank -%}
+    <div class="hoc-specimen-block__row">
+      <dt class="hoc-eyebrow">Guarantee</dt>
+      <dd class="hoc-body">{{ mf.guarantee.value }}</dd>
+    </div>
+  {%- endif -%}
+</dl>

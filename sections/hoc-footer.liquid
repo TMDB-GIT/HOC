@@ -1,0 +1,149 @@
+{% comment %}
+  House of Clarence — Footer
+  Sage ground, canvas text, brass hairlines. Columns are added as blocks in the
+  theme editor (each is a heading + a navigation menu). A quiet newsletter
+  sign-up ("Inspiration, occasionally") and a legal strip sit beneath.
+{% endcomment %}
+
+<footer class="hoc-footer">
+  <div class="hoc-container hoc-footer__grid">
+    {%- comment %} Brand column {% endcomment -%}
+    <div class="hoc-footer__brand">
+      <a href="{{ routes.root_url }}" class="hoc-footer__logo">
+        {%- if section.settings.logo != blank -%}
+          <img
+            src="{{ section.settings.logo | image_url: width: 420 }}"
+            alt="{{ shop.name | escape }}"
+            height="32"
+            width="auto"
+            style="height:32px;width:auto;"
+          >
+        {%- else -%}
+          {{ shop.name }}
+        {%- endif -%}
+      </a>
+      {%- if section.settings.tagline != blank -%}
+        <p class="hoc-footer__tagline">{{ section.settings.tagline }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- comment %} Link columns + newsletter (from blocks) {% endcomment -%}
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'menu' -%}
+          {%- assign col_menu = linklists[block.settings.menu] -%}
+          <div class="hoc-footer__col" {{ block.shopify_attributes }}>
+            {%- if block.settings.heading != blank -%}
+              <h3>{{ block.settings.heading }}</h3>
+            {%- endif -%}
+            {%- if col_menu != blank -%}
+              <ul>
+                {%- for link in col_menu.links -%}
+                  <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+
+        {%- when 'newsletter' -%}
+          <div class="hoc-footer__col hoc-footer__newsletter" {{ block.shopify_attributes }}>
+            {%- if block.settings.heading != blank -%}
+              <h3>{{ block.settings.heading }}</h3>
+            {%- endif -%}
+            {% form 'customer', class: 'hoc-newsletter-form' %}
+              <input type="hidden" name="contact[tags]" value="newsletter">
+              {%- if form.posted_successfully? -%}
+                <p class="hoc-small" style="color:var(--hoc-canvas);">{{ block.settings.success_text | default: 'Thank you. You are on the list.' }}</p>
+              {%- else -%}
+                <label for="hoc-newsletter-email">{{ block.settings.label | default: 'Email address' }}</label>
+                <div class="hoc-field-row">
+                  <input
+                    id="hoc-newsletter-email"
+                    type="email"
+                    name="contact[email]"
+                    placeholder="you@example.com"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    required
+                  >
+                  <button type="submit" aria-label="Sign up">
+                    {% render 'hoc-icon', name: 'arrow' %}
+                  </button>
+                </div>
+              {%- endif -%}
+            {% endform %}
+          </div>
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+
+  <div class="hoc-footer__bottom">
+    <div class="hoc-container hoc-footer__bottom-inner">
+      <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</span>
+      {%- if section.settings.show_policies and shop.policies.size > 0 -%}
+        <span>
+          {%- for policy in shop.policies -%}
+            <a href="{{ policy.url }}">{{ policy.title }}</a>{%- unless forloop.last %} &nbsp;·&nbsp; {% endunless -%}
+          {%- endfor -%}
+        </span>
+      {%- endif -%}
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "HoC Footer",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image (single colour)",
+      "info": "Optional. If empty, the shop name is used."
+    },
+    {
+      "type": "textarea",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Curating spaces of quiet confidence. Materials with provenance, designed to endure."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_policies",
+      "label": "Show policy links in bottom strip",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Link column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by room" },
+        { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Inspiration, occasionally" },
+        { "type": "text", "id": "label", "label": "Field label", "default": "Email address" },
+        { "type": "text", "id": "success_text", "label": "Success message", "default": "Thank you. You are on the list." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "HoC Footer",
+      "blocks": [
+        { "type": "menu" },
+        { "type": "menu" },
+        { "type": "menu" },
+        { "type": "newsletter" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,107 @@
+{% comment %}
+  House of Clarence — "Your bag" slide-over drawer (prd.md §6)
+  Rendered once in theme.liquid via {% section 'hoc-cart-drawer' %}.
+  Updated over AJAX using Shopify's Section Rendering API (see hoc-cart.js):
+  add/change/remove re-render this section's HTML and swap it in.
+
+  Open/close state is held by a `hoc-cart-open` class on <body>, so swapping the
+  inner HTML never loses the open state.
+{% endcomment %}
+
+<div
+  class="hoc-cartdrawer"
+  data-hoc-cart-drawer
+  data-cart-count="{{ cart.item_count }}"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Your bag"
+>
+  <div class="hoc-cartdrawer__overlay" data-hoc-cart-close></div>
+
+  <div class="hoc-cartdrawer__panel">
+    <div class="hoc-cartdrawer__head">
+      <h2 class="hoc-h3">Your bag {% if cart.item_count > 0 %}<span class="hoc-cartdrawer__count">({{ cart.item_count }})</span>{% endif %}</h2>
+      <button type="button" class="hoc-iconbtn" aria-label="Close bag" data-hoc-cart-close>
+        {% render 'hoc-icon', name: 'close' %}
+      </button>
+    </div>
+
+    {%- if cart.item_count == 0 -%}
+      <div class="hoc-cartdrawer__empty">
+        <p class="hoc-body-l">Your bag is empty — start with the rooms.</p>
+        <a href="{{ routes.collections_url }}" class="hoc-btn hoc-btn--secondary">Explore the rooms</a>
+      </div>
+    {%- else -%}
+      <ul class="hoc-cartdrawer__items" role="list">
+        {%- for item in cart.items -%}
+          <li class="hoc-cartline" data-hoc-line="{{ forloop.index }}">
+            <a href="{{ item.url }}" class="hoc-cartline__media">
+              {%- if item.image -%}
+                <img
+                  src="{{ item.image | image_url: width: 200 }}"
+                  alt="{{ item.image.alt | default: item.product.title | escape }}"
+                  width="100"
+                  height="125"
+                  loading="lazy"
+                >
+              {%- endif -%}
+            </a>
+            <div class="hoc-cartline__body">
+              <a href="{{ item.url }}" class="hoc-cartline__title">{{ item.product.title }}</a>
+              <span class="hoc-specimen hoc-cartline__caption">
+                {% render 'hoc-specimen-meta', product: item.product %}
+                {%- unless item.product.has_only_default_variant -%}
+                  <span class="hoc-specimen__sep">/</span> {{ item.variant.title }}
+                {%- endunless -%}
+              </span>
+
+              <div class="hoc-cartline__foot">
+                <div class="hoc-qty" data-hoc-qty>
+                  <button type="button" class="hoc-qty__btn" aria-label="Decrease quantity" data-hoc-qty-down data-line="{{ forloop.index }}">
+                    {% render 'hoc-icon', name: 'minus' %}
+                  </button>
+                  <span class="hoc-qty__val" aria-live="polite">{{ item.quantity }}</span>
+                  <button type="button" class="hoc-qty__btn" aria-label="Increase quantity" data-hoc-qty-up data-line="{{ forloop.index }}">
+                    {% render 'hoc-icon', name: 'plus' %}
+                  </button>
+                </div>
+                <span class="hoc-cartline__price hoc-body">
+                  {%- if item.final_line_price == 0 -%}
+                    Price on application
+                  {%- else -%}
+                    {{ item.final_line_price | money_without_trailing_zeros }}
+                  {%- endif -%}
+                </span>
+              </div>
+
+              <button type="button" class="hoc-cartline__remove hoc-link" data-hoc-remove data-line="{{ forloop.index }}">Remove</button>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <div class="hoc-cartdrawer__footer">
+        <div class="hoc-cartdrawer__subtotal">
+          <span class="hoc-eyebrow">Subtotal</span>
+          <span class="hoc-body-l">
+            {%- if cart.total_price == 0 -%}
+              Price on application
+            {%- else -%}
+              {{ cart.total_price | money_without_trailing_zeros }}
+            {%- endif -%}
+          </span>
+        </div>
+        <p class="hoc-small hoc-cartdrawer__note">Taxes and delivery calculated at checkout.</p>
+        <a href="{{ routes.cart_url }}/checkout" class="hoc-btn hoc-btn--primary hoc-btn--full">Checkout</a>
+        <a href="{{ routes.cart_url }}" class="hoc-textlink hoc-cartdrawer__viewbag">View bag</a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": []
+}
+{% endschema %}

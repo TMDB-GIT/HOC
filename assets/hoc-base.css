@@ -1,0 +1,222 @@
+/* ==========================================================================
+   HOUSE OF CLARENCE — hoc-base.css
+   --------------------------------------------------------------------------
+   The single source of truth for the brand's look. Everything here is a
+   "design token": a named value (a colour, a size, a space) reused across the
+   whole site so the look stays consistent. Change a value here and it updates
+   everywhere.
+
+   This file is loaded AFTER Dawn's base.css, so anything we set here wins.
+   We also redefine Dawn's own font/colour variables so Dawn's built-in
+   components (cart, search, etc.) inherit the House of Clarence look for free.
+
+   See prd.md §4–§5 for the rationale behind every value.
+   ========================================================================== */
+
+:root {
+  /* ---- Colour: anchors (cream / Stitch direction) ---------------------- */
+  --hoc-ink: #1c1c18;        /* warm near-black — body text, strong UI         */
+  --hoc-ink-strong: #080806; /* deepest ink — logo, headings if extra weight   */
+  --hoc-canvas: #fcf9f2;     /* warm cream — default page background            */
+  --hoc-paper: #f6f3ec;      /* lighter surface — cards, raised panels, PDP     */
+  --hoc-footer-bg: #1c1c1a;  /* near-black footer (matches the mock-ups)        */
+
+  /* ---- Colour: heritage secondary ------------------------------------- */
+  --hoc-sage: #3b4138;       /* deep olive-sage — drama sections, footer        */
+  --hoc-sage-soft: #5a6056;  /* hover / disabled variant of sage                */
+
+  /* ---- Colour: metallic accent — USE SPARINGLY (jewellery, not paint) -- */
+  --hoc-brass: #9a7b4f;      /* hairline rules, hover, active detail            */
+  --hoc-brass-deep: #7c6240; /* pressed / active brass                          */
+
+  /* ---- Colour: neutrals / structure ----------------------------------- */
+  --hoc-stone: #6f6e67;      /* muted captions / specimen metadata (legible)    */
+  --hoc-stone-line: #c8c7be; /* hairline borders                                */
+
+  /* ---- Colour: functional (in-key, never neon) ------------------------ */
+  --hoc-success: #4f6b4a;
+  --hoc-error: #8c4a3f;
+
+  /* ---- Type scale: fluid with clamp() (~1.25 major third) --------------
+     IMPORTANT: Dawn sets the root font-size to 62.5%, so 1rem = 10px here
+     (not 16px). All values below are expressed for that 10px base, e.g.
+     1.6rem = 16px. Keeping Dawn's base avoids resizing Dawn's own components. */
+  --t-hero: clamp(4.4rem, 5vw + 1.6rem, 8.8rem);  /* 44–88px — hero            */
+  --t-h1: clamp(3.2rem, 3vw + 1.6rem, 5.2rem);    /* 32–52px                   */
+  --t-h2: clamp(2.4rem, 2vw + 0.8rem, 3.6rem);    /* 24–36px                   */
+  --t-h3: 2.2rem;                                 /* 22px                      */
+  --t-body-l: 1.8rem;                             /* 18px — lead paragraphs    */
+  --t-body: 1.6rem;                               /* 16px — body               */
+  --t-small: 1.4rem;                              /* 14px — captions, nav      */
+  --t-mono: 1.2rem;                               /* 12px — eyebrows / specs   */
+
+  /* ---- Type families --------------------------------------------------- */
+  --hoc-font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --hoc-font-body: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --hoc-font-mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  /* ---- Spacing scale (8px base, expressed for 10px rem) --------------- */
+  --s-1: 0.8rem;   /* 8px  */
+  --s-2: 1.6rem;   /* 16px */
+  --s-3: 2.4rem;   /* 24px */
+  --s-4: 3.2rem;   /* 32px */
+  --s-5: 4.8rem;   /* 48px */
+  --s-6: 6.4rem;   /* 64px */
+  --s-7: 9.6rem;   /* 96px */
+  --s-8: 12.8rem;  /* 128px */
+  --s-9: 19.2rem;  /* 192px */
+
+  /* ---- Layout ---------------------------------------------------------- */
+  --hoc-container: 1440px;        /* max content width                      */
+  --hoc-container-text: 720px;    /* editorial reading column               */
+  --hoc-gutter: clamp(1.6rem, 4vw, 6.4rem); /* 16–64px side margins */
+  --hoc-radius: 3px;              /* near-square corners — architectural     */
+
+  /* ---- Aspect-ratio tokens (stops the grid jumping as images load) ----- */
+  --hoc-ratio-hero: 16 / 9;
+  --hoc-ratio-tile: 1 / 1;
+  --hoc-ratio-product: 4 / 5;
+  --hoc-ratio-detail: 1 / 1;
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --hoc-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --hoc-speed: 220ms;
+
+  /* ----------------------------------------------------------------------
+     Re-map Dawn's own variables to the HoC palette/type. This quietly
+     re-skins Dawn's built-in components (cart drawer, search, etc.) so they
+     match the brand without us touching each one.
+     Dawn stores colours as "r,g,b" triples used inside rgb(...) / rgba(...).
+     ---------------------------------------------------------------------- */
+  --font-body-family: var(--hoc-font-body);
+  --font-heading-family: var(--hoc-font-display);
+  --font-heading-weight: 400; /* display serif is never bold */
+
+  --color-background: 252, 249, 242;  /* #FCF9F2 cream  */
+  --color-foreground: 28, 28, 24;     /* #1C1C18 ink    */
+  --color-button: 32, 32, 29;         /* ink fill       */
+  --color-button-text: 252, 249, 242; /* cream text     */
+  --color-link: 124, 98, 64;          /* brass-deep     */
+
+  --page-width: 1440px;
+}
+
+/* ==========================================================================
+   Base page
+   ========================================================================== */
+
+body {
+  background-color: var(--hoc-canvas);
+  color: var(--hoc-ink);
+  font-family: var(--hoc-font-body);
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0; /* Dawn adds 0.06rem tracking to body — we don't want it */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--hoc-brass);
+  color: var(--hoc-paper);
+}
+
+/* ==========================================================================
+   Layout helpers — reused by every HoC section
+   ========================================================================== */
+
+/* Centres content and applies the responsive side margins from the design
+   (24px on mobile, up to 64px on desktop). */
+.hoc-container {
+  width: 100%;
+  max-width: var(--hoc-container);
+  margin-inline: auto;
+  padding-inline: var(--hoc-gutter);
+}
+
+/* Generous vertical rhythm between sections — "space is luxury". */
+.hoc-section {
+  padding-block: clamp(var(--s-6), 10vw, var(--s-9));
+}
+.hoc-section--tight {
+  padding-block: clamp(var(--s-5), 6vw, var(--s-7));
+}
+
+/* The hairline divider — "a string stretched across the page". */
+.hoc-rule {
+  border: 0;
+  border-top: 1px solid var(--hoc-stone-line);
+  margin: 0;
+}
+
+/* A section header row: title left, quiet link right, hairline under. */
+.hoc-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--s-3);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+  border-bottom: 1px solid var(--hoc-stone-line);
+}
+
+/* Surface tiers (PRD §4.1 usage discipline). */
+.hoc-surface-paper { background-color: var(--hoc-paper); }
+.hoc-surface-sage {
+  background-color: var(--hoc-sage);
+  color: var(--hoc-canvas);
+}
+.hoc-surface-ink {
+  background-color: var(--hoc-ink);
+  color: var(--hoc-canvas);
+}
+
+/* Visually hidden but available to screen readers (accessible labels). */
+.hoc-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   Focus — visible keyboard focus everywhere (accessibility, PRD §10)
+   ========================================================================== */
+:focus-visible {
+  outline: 2px solid var(--hoc-brass);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Scroll reveal (PRD §7) — only when .hoc-anim is set (motion allowed).
+   Sections fade up once on entry; the .is-in class is added by hoc-reveal.js.
+   ========================================================================== */
+.hoc-anim .hoc-section {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s var(--hoc-ease), transform 0.6s var(--hoc-ease);
+  will-change: opacity, transform;
+}
+.hoc-anim .hoc-section.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ==========================================================================
+   Reduced motion — respect the OS setting (PRD §7)
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,59 @@
+{% comment %}
+  House of Clarence — thin line icon set.
+  Monochrome, ~1.25px optical stroke, rounded joins (prd.md §4.4).
+  Colour comes from the surrounding text colour (stroke: currentColor).
+
+  Usage:
+    {% render 'hoc-icon', name: 'bag' %}
+    {% render 'hoc-icon', name: 'search', class: 'hoc-icon--lg' %}
+
+  Available names: search, account, ideabook, ideabook-filled, bag, menu,
+  close, chevron, arrow, plus, minus, filter, delivery, shield, handshake,
+  architecture, leaf.
+{% endcomment %}
+
+{%- liquid
+  assign n = name | default: 'arrow'
+  assign cls = class | default: ''
+-%}
+
+<svg class="hoc-icon {{ cls }}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  {%- case n -%}
+    {%- when 'search' -%}
+      <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+    {%- when 'account' -%}
+      <circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"></path>
+    {%- when 'ideabook' -%}
+      <path d="M6 3h12v18l-6-4-6 4z"></path>
+    {%- when 'ideabook-filled' -%}
+      <path d="M6 3h12v18l-6-4-6 4z" fill="currentColor"></path>
+    {%- when 'bag' -%}
+      <path d="M6 7h12l1 13H5z"></path><path d="M9 7V5a3 3 0 0 1 6 0v2"></path>
+    {%- when 'menu' -%}
+      <line x1="3" y1="7" x2="21" y2="7"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="17" x2="21" y2="17"></line>
+    {%- when 'close' -%}
+      <line x1="5" y1="5" x2="19" y2="19"></line><line x1="19" y1="5" x2="5" y2="19"></line>
+    {%- when 'chevron' -%}
+      <polyline points="6 9 12 15 18 9"></polyline>
+    {%- when 'arrow' -%}
+      <line x1="4" y1="12" x2="20" y2="12"></line><polyline points="14 6 20 12 14 18"></polyline>
+    {%- when 'plus' -%}
+      <line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
+    {%- when 'minus' -%}
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    {%- when 'filter' -%}
+      <line x1="3" y1="6" x2="21" y2="6"></line><line x1="6" y1="12" x2="18" y2="12"></line><line x1="9" y1="18" x2="15" y2="18"></line>
+    {%- when 'delivery' -%}
+      <path d="M3 7h11v8H3z"></path><path d="M14 10h4l3 3v2h-7z"></path><circle cx="7" cy="17" r="1.6"></circle><circle cx="17.5" cy="17" r="1.6"></circle>
+    {%- when 'shield' -%}
+      <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"></path>
+    {%- when 'handshake' -%}
+      <path d="M3 12l4-4 5 3 5-3 4 4"></path><path d="M7 12l3 3 2-2 2 2 3-3"></path>
+    {%- when 'architecture' -%}
+      <path d="M12 3l9 16H3z"></path><line x1="12" y1="3" x2="12" y2="19"></line>
+    {%- when 'leaf' -%}
+      <path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14z"></path><line x1="5" y1="19" x2="12" y2="12"></line>
+    {%- else -%}
+      <circle cx="12" cy="12" r="9"></circle>
+  {%- endcase -%}
+</svg>

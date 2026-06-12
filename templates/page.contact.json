@@ -1,25 +1,21 @@
 {
   "sections": {
-    "main": {
-      "type": "main-page",
+    "header": {
+      "type": "page-header",
       "settings": {
-        "padding_top": 36,
-        "padding_bottom": 36
+        "eyebrow": "Contact",
+        "heading": "Get in touch",
+        "intro": "For private clients and trade. Tell us about your project and we’ll help you specify the right pieces."
       }
     },
     "form": {
-      "type": "contact-form",
+      "type": "hoc-contact-form",
       "settings": {
-        "heading": "",
-        "heading_size": "h1",
-        "color_scheme": "scheme-1",
-        "padding_top": 36,
-        "padding_bottom": 36
+        "heading": "Discuss a project",
+        "intro": "Tell us what you are building or renovating. Our team will help you specify the right pieces — for private clients and trade alike.",
+        "button_label": "Send enquiry"
       }
     }
   },
-  "order": [
-    "main",
-    "form"
-  ]
+  "order": ["header", "form"]
 }

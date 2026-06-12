@@ -1,0 +1,47 @@
+{
+  "sections": {
+    "header": {
+      "type": "page-header",
+      "settings": {
+        "eyebrow": "The House",
+        "heading": "House of Clarence",
+        "intro": "The furnishings and finishes house for homes of substantial value — sister to Market Design & Build. Where the house is built, House of Clarence furnishes it.",
+        "default_image_filename": "hoc-pageheader-about.jpg",
+        "default_image_alt": "A quiet sitting room glimpsed through bronze-tinted glass doors"
+      }
+    },
+    "story": {
+      "type": "editorial-split",
+      "settings": {
+        "default_image_filename": "hoc-editorial-oak.jpg",
+        "default_image_alt": "Pale oak grain in soft natural light",
+        "image_position": "left",
+        "surface": "paper",
+        "eyebrow": "Our standard",
+        "heading": "A considered standard of care",
+        "text": "<p>We bring the same rigour to furnishing a home as our sister company brings to building it. Every piece is chosen for material honesty, provenance and longevity — vanities, baths, brassware, kitchens, lighting and joinery, made to be lived in.</p>",
+        "button_label": "Explore the rooms"
+      }
+    },
+    "manifesto": {
+      "type": "hoc-rich-text",
+      "settings": {
+        "surface": "canvas",
+        "eyebrow": "The philosophy",
+        "heading": "Quiet confidence",
+        "text": "<p>Premium brand, premium clients — without premium pricing. We win by behaving like the most confident, quietest house in the room, and letting the work imply the value. Price is stated plainly, never sold.</p><p>Calm, considered, tactile. It is about how a home makes you feel.</p>"
+      }
+    },
+    "trade": {
+      "type": "cta-band",
+      "settings": {
+        "surface": "sage",
+        "eyebrow": "Trade",
+        "heading": "Working on a project?",
+        "text": "We work with interior designers, architects and builders. Speak to us about specification, trade pricing and bulk.",
+        "button_label": "Get in touch"
+      }
+    }
+  },
+  "order": ["header", "story", "manifesto", "trade"]
+}

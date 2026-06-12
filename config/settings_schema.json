@@ -8,6 +8,27 @@
     "theme_support_url": "https://support.shopify.com/"
   },
   {
+    "name": "House of Clarence",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Brand colours"
+      },
+      {
+        "type": "paragraph",
+        "content": "These control the House of Clarence palette across the whole site."
+      },
+      { "type": "color", "id": "hoc_canvas", "label": "Canvas — page background", "default": "#fcf9f2" },
+      { "type": "color", "id": "hoc_paper", "label": "Paper — cards & panels", "default": "#f6f3ec" },
+      { "type": "color", "id": "hoc_ink", "label": "Ink — body text", "default": "#1c1c18" },
+      { "type": "color", "id": "hoc_ink_strong", "label": "Ink strong — logo & headings", "default": "#080806" },
+      { "type": "color", "id": "hoc_sage", "label": "Sage — drama sections", "default": "#3b4138" },
+      { "type": "color", "id": "hoc_brass", "label": "Brass — accent (use sparingly)", "default": "#9a7b4f" },
+      { "type": "color", "id": "hoc_stone_line", "label": "Hairline — dividers & borders", "default": "#c8c7be" },
+      { "type": "color", "id": "hoc_footer_bg", "label": "Footer background", "default": "#1c1c1a" }
+    ]
+  },
+  {
     "name": "t:settings_schema.logo.name",
     "settings": [
       {

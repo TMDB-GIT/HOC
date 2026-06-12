@@ -1,0 +1,174 @@
+{% comment %}
+  House of Clarence — Header
+  Sticky, slim, paper surface with a hairline that deepens on scroll.
+  Left: logo. Centre/left: room-led nav. Right: search, account, ideabook, bag.
+  Mobile: off-canvas accordion drawer.
+
+  Editable in the theme editor: logo image, navigation menu, ideabook link,
+  and which icons to show.
+{% endcomment %}
+
+<script src="{{ 'hoc-header.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign menu = linklists[section.settings.menu]
+  assign show_account = section.settings.show_account
+  assign show_ideabook = section.settings.show_ideabook
+-%}
+
+<header class="hoc-header" data-hoc-header>
+  <div class="hoc-container hoc-header__inner">
+    {%- comment %} Mobile: burger {% endcomment -%}
+    <button
+      type="button"
+      class="hoc-iconbtn hoc-burger"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="hoc-menu-drawer"
+      data-hoc-menu-open
+    >
+      {% render 'hoc-icon', name: 'menu' %}
+    </button>
+
+    {%- comment %} Logo: image if supplied, otherwise the wordmark {% endcomment -%}
+    <a href="{{ routes.root_url }}" class="hoc-logo">
+      {%- if section.settings.logo != blank -%}
+        <img
+          src="{{ section.settings.logo | image_url: width: 480 }}"
+          alt="{{ shop.name | escape }}"
+          width="{{ section.settings.logo.width }}"
+          height="{{ section.settings.logo.height }}"
+        >
+      {%- else -%}
+        {{ shop.name }}
+      {%- endif -%}
+    </a>
+
+    {%- comment %} Desktop navigation {% endcomment -%}
+    {%- if menu != blank -%}
+      <nav class="hoc-nav" aria-label="Primary">
+        {%- for link in menu.links -%}
+          <a
+            href="{{ link.url }}"
+            class="hoc-nav__link{% if link.active or link.child_active %} is-active{% endif %}"
+          >
+            {{ link.title }}
+          </a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+
+    {%- comment %} Trailing icons {% endcomment -%}
+    <div class="hoc-header__actions">
+      <a href="{{ routes.search_url }}" class="hoc-iconbtn" aria-label="Search" data-hoc-search-open>
+        {% render 'hoc-icon', name: 'search' %}
+      </a>
+
+      {%- if show_account and shop.customer_accounts_enabled -%}
+        <a
+          href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
+          class="hoc-iconbtn hoc-iconbtn--desktop"
+          aria-label="Account"
+        >
+          {% render 'hoc-icon', name: 'account' %}
+        </a>
+      {%- endif -%}
+
+      {%- if show_ideabook -%}
+        <a
+          href="{{ section.settings.ideabook_link | default: routes.root_url }}"
+          class="hoc-iconbtn hoc-iconbtn--desktop"
+          aria-label="Ideabook"
+        >
+          {% render 'hoc-icon', name: 'ideabook' %}
+        </a>
+      {%- endif -%}
+
+      <a href="{{ routes.cart_url }}" class="hoc-iconbtn" aria-label="Your bag" data-hoc-cart-open>
+        {% render 'hoc-icon', name: 'bag' %}
+        <span class="hoc-cart-count" data-hoc-cart-count {% if cart.item_count == 0 %}hidden{% endif %}>
+          {{ cart.item_count }}
+        </span>
+      </a>
+    </div>
+  </div>
+</header>
+
+{%- comment %} Mobile off-canvas drawer {% endcomment -%}
+<div class="hoc-drawer" id="hoc-menu-drawer" data-hoc-drawer>
+  <div class="hoc-drawer__overlay" data-hoc-menu-close></div>
+  <div class="hoc-drawer__panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="hoc-drawer__head">
+      <span class="hoc-logo" style="font-size: var(--t-h3);">{{ shop.name }}</span>
+      <button type="button" class="hoc-iconbtn" aria-label="Close menu" data-hoc-menu-close>
+        {% render 'hoc-icon', name: 'close' %}
+      </button>
+    </div>
+
+    {%- if menu != blank -%}
+      <nav aria-label="Mobile">
+        {%- for link in menu.links -%}
+          <a href="{{ link.url }}" class="hoc-drawer__link">{{ link.title }}</a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+
+    <div class="hoc-drawer__utility">
+      {%- if show_account and shop.customer_accounts_enabled -%}
+        <a
+          href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
+          class="hoc-textlink"
+        >
+          {% render 'hoc-icon', name: 'account' %} {% if customer %}Account{% else %}Sign in{% endif %}
+        </a>
+      {%- endif -%}
+      {%- if show_ideabook -%}
+        <a href="{{ section.settings.ideabook_link | default: routes.root_url }}" class="hoc-textlink">
+          {% render 'hoc-icon', name: 'ideabook' %} Ideabook
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "HoC Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image",
+      "info": "Optional. If empty, the shop name is shown as a serif wordmark."
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Navigation menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "header",
+      "content": "Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account icon",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_ideabook",
+      "label": "Show ideabook icon",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "ideabook_link",
+      "label": "Ideabook link",
+      "info": "Where the bookmark icon goes (e.g. a page). Leave empty for now."
+    }
+  ]
+}
+{% endschema %}

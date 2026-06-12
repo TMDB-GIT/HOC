@@ -1,0 +1,40 @@
+{% comment %}
+  House of Clarence — Predictive search drawer (prd.md §8.8)
+  Opens from the header search icon. Type to see live product suggestions
+  (Shopify predictive search). Without JS, the form submits to the normal
+  search results page. Rendered once in theme.liquid.
+{% endcomment %}
+
+<div class="hoc-search" data-hoc-search role="dialog" aria-modal="true" aria-label="Search">
+  <div class="hoc-search__overlay" data-hoc-search-close></div>
+  <div class="hoc-search__panel">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="hoc-search__form" data-hoc-search-form>
+      <span class="hoc-icon-wrap">{% render 'hoc-icon', name: 'search' %}</span>
+      <label for="hoc-search-input" class="hoc-visually-hidden">Search</label>
+      <input
+        id="hoc-search-input"
+        type="search"
+        name="q"
+        placeholder="Search the house — vanities, basins, mirrors…"
+        autocomplete="off"
+        autocorrect="off"
+        spellcheck="false"
+        data-hoc-search-input
+      >
+      <button type="button" class="hoc-iconbtn" aria-label="Close search" data-hoc-search-close>
+        {% render 'hoc-icon', name: 'close' %}
+      </button>
+    </form>
+
+    <div class="hoc-search__results" data-hoc-search-results aria-live="polite">
+      <p class="hoc-eyebrow hoc-search__hint">Start typing to search the catalogue.</p>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Search drawer",
+  "settings": []
+}
+{% endschema %}

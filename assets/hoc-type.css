@@ -1,0 +1,169 @@
+/* ==========================================================================
+   HOUSE OF CLARENCE — hoc-type.css
+   --------------------------------------------------------------------------
+   The three typographic "voices" (prd.md §4.2):
+     • Editorial serif  — Newsreader      — headlines, hero, category titles
+     • Functional body  — Hanken Grotesk  — body, nav, UI, buttons
+     • Technical mono    — IBM Plex Mono   — eyebrows, specs, prices, SKUs
+
+   The fonts themselves are loaded in layout/theme.liquid (Google Fonts).
+   If we ever self-host licensed fonts (Canela/Söhne tier), the @font-face
+   rules would live here.
+
+   Rules of the house:
+     - Display serif is NEVER bold; let size carry the weight (leading 1.05–1.1).
+     - Body grotesque leads at 1.55, reading column ~68ch.
+     - Mono eyebrows are UPPERCASE, tracked 0.08em, small.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Headings → editorial serif, normal weight, tight leading.
+   Applies to real <h1>–<h4> AND Dawn's heading classes so the whole theme
+   inherits the serif look.
+   -------------------------------------------------------------------------- */
+h1,
+h2,
+h3,
+h4,
+.h0,
+.h1,
+.h2,
+.h3,
+.h4 {
+  font-family: var(--hoc-font-display);
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--hoc-ink);
+}
+
+/* --------------------------------------------------------------------------
+   Display / heading sizes (use these utility classes in HoC sections).
+   -------------------------------------------------------------------------- */
+.hoc-hero {
+  font-family: var(--hoc-font-display);
+  font-weight: 400;
+  font-size: var(--t-hero);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+.hoc-h1 {
+  font-family: var(--hoc-font-display);
+  font-weight: 400;
+  font-size: var(--t-h1);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+.hoc-h2 {
+  font-family: var(--hoc-font-display);
+  font-weight: 400;
+  font-size: var(--t-h2);
+  line-height: 1.1;
+}
+.hoc-h3 {
+  font-family: var(--hoc-font-display);
+  font-weight: 400;
+  font-size: var(--t-h3);
+  line-height: 1.2;
+}
+
+/* --------------------------------------------------------------------------
+   Body copy → functional grotesque.
+   -------------------------------------------------------------------------- */
+.hoc-body-l {
+  font-family: var(--hoc-font-body);
+  font-size: var(--t-body-l);
+  line-height: 1.6;
+}
+.hoc-body {
+  font-family: var(--hoc-font-body);
+  font-size: var(--t-body);
+  line-height: 1.55;
+}
+.hoc-small {
+  font-family: var(--hoc-font-body);
+  font-size: var(--t-small);
+  line-height: 1.5;
+}
+
+/* An editorial reading column never runs wider than ~68 characters. */
+.hoc-prose {
+  max-width: var(--hoc-container-text);
+}
+.hoc-prose p {
+  font-family: var(--hoc-font-body);
+  font-size: var(--t-body-l);
+  line-height: 1.6;
+  margin-block: 0 var(--s-3);
+}
+.hoc-prose p:last-child {
+  margin-bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   The technical voice — mono.
+   .hoc-eyebrow : small all-caps label that sits above a title (it labels,
+                  it does not decorate).
+   .hoc-specimen: the Specimen Label — the brand's signature (see §4.7).
+   -------------------------------------------------------------------------- */
+.hoc-eyebrow,
+.hoc-specimen {
+  font-family: var(--hoc-font-mono);
+  font-size: var(--t-mono);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hoc-eyebrow {
+  display: inline-block;
+  color: var(--hoc-sage-soft);
+}
+
+/* The specimen caption: metadata in stone, price in ink, brass dividers.
+   Markup pattern:
+     <p class="hoc-specimen">
+       <span>OAK · NATURAL</span>
+       <span class="hoc-specimen__sep">/</span>
+       <span class="hoc-specimen__price">£1,397</span>
+     </p>
+*/
+.hoc-specimen {
+  color: var(--hoc-stone);
+  display: inline;
+}
+.hoc-specimen__sep {
+  color: var(--hoc-brass);
+  margin-inline: 0.4em;
+}
+.hoc-specimen__price {
+  color: var(--hoc-ink);
+}
+
+/* The ex-VAT caption that follows a price, for trade credibility. */
+.hoc-exvat {
+  font-family: var(--hoc-font-mono);
+  font-size: var(--t-mono);
+  letter-spacing: 0.04em;
+  color: var(--hoc-stone);
+}
+
+/* --------------------------------------------------------------------------
+   Links: ink text with a brass underline that draws in on hover.
+   -------------------------------------------------------------------------- */
+.hoc-link {
+  color: var(--hoc-ink);
+  text-decoration: none;
+  background-image: linear-gradient(var(--hoc-brass), var(--hoc-brass));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size var(--hoc-speed) var(--hoc-ease);
+  padding-bottom: 1px;
+}
+.hoc-link:hover,
+.hoc-link:focus-visible {
+  background-size: 100% 1px;
+}

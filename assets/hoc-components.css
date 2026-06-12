@@ -1,0 +1,848 @@
+/* ==========================================================================
+   HOUSE OF CLARENCE — hoc-components.css
+   --------------------------------------------------------------------------
+   Styles for reusable interface pieces (prd.md §6). All components are quiet
+   by default; brass and motion are reserved for interaction. Square corners,
+   hairline borders, no drop shadows (except a barely-there one on the sticky
+   header and mini-cart).
+
+   This file grows through the build. Foundation phase covers:
+     - Buttons & quiet links
+     - Trust strip
+     - Header (logo, nav, icons, sticky behaviour)
+     - Mobile menu drawer
+     - Footer
+   ========================================================================== */
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.hoc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-1);
+  min-height: 44px; /* generous tap target */
+  padding: 1.4rem 3.2rem;
+  border: 1px solid transparent;
+  border-radius: var(--hoc-radius);
+  font-family: var(--hoc-font-body);
+  font-size: var(--t-small);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--hoc-speed) var(--hoc-ease),
+    color var(--hoc-speed) var(--hoc-ease),
+    border-color var(--hoc-speed) var(--hoc-ease);
+}
+
+/* Primary: ink fill, canvas text. Hover shifts to sage. */
+.hoc-btn--primary {
+  background-color: var(--hoc-ink);
+  color: var(--hoc-canvas);
+}
+.hoc-btn--primary:hover {
+  background-color: var(--hoc-sage);
+}
+
+/* Secondary: outline. Hover → brass border + text. */
+.hoc-btn--secondary {
+  background-color: transparent;
+  border-color: var(--hoc-ink);
+  color: var(--hoc-ink);
+}
+.hoc-btn--secondary:hover {
+  border-color: var(--hoc-brass-deep);
+  color: var(--hoc-brass-deep);
+}
+
+/* On a dark (sage/ink) surface, invert the outline button. */
+.hoc-surface-sage .hoc-btn--secondary,
+.hoc-surface-ink .hoc-btn--secondary {
+  border-color: var(--hoc-canvas);
+  color: var(--hoc-canvas);
+}
+.hoc-surface-sage .hoc-btn--secondary:hover,
+.hoc-surface-ink .hoc-btn--secondary:hover {
+  border-color: var(--hoc-brass);
+  color: var(--hoc-brass);
+}
+
+.hoc-btn--full {
+  width: 100%;
+}
+
+/* A quiet text link with a trailing arrow — used in section headers. */
+.hoc-textlink {
+  font-family: var(--hoc-font-mono);
+  font-size: var(--t-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hoc-sage-soft);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  transition: color var(--hoc-speed) var(--hoc-ease);
+}
+.hoc-textlink:hover {
+  color: var(--hoc-ink);
+}
+.hoc-textlink svg {
+  width: 1em;
+  height: 1em;
+  transition: transform var(--hoc-speed) var(--hoc-ease);
+}
+.hoc-textlink:hover svg {
+  transform: translateX(3px);
+}
+
+/* ==========================================================================
+   Icons — thin line, monochrome, inherit text colour
+   ========================================================================== */
+.hoc-icon {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vertical-align: middle;
+}
+
+/* ==========================================================================
+   Trust strip (NOT a discount strip) — quiet reassurances (§6)
+   ========================================================================== */
+.hoc-trust {
+  border-top: 1px solid var(--hoc-stone-line);
+  border-bottom: 1px solid var(--hoc-stone-line);
+}
+.hoc-trust__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--s-3) var(--s-5);
+  padding-block: var(--s-4);
+}
+.hoc-trust__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-family: var(--hoc-font-mono);
+  font-size: var(--t-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hoc-ink);
+}
+.hoc-trust__item .hoc-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--hoc-sage-soft);
+}
+.hoc-trust__sep {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--hoc-stone);
+}
+@media (max-width: 768px) {
+  .hoc-trust__sep {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+.hoc-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: rgba(246, 244, 239, 0.8); /* paper @ 80% */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--hoc-stone-line);
+  transition: border-color var(--hoc-speed) var(--hoc-ease),
+    box-shadow var(--hoc-speed) var(--hoc-ease);
+}
+/* Border deepens + barely-there shadow once the page is scrolled. */
+.hoc-header.is-scrolled {
+  border-bottom-color: var(--hoc-stone);
+  box-shadow: 0 1px 0 rgba(32, 32, 29, 0.04);
+}
+
+.hoc-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding-block: var(--s-2);
+}
+
+/* Logo wordmark (until the SVG logo is supplied).
+   Large and prominent like the mock-up; constrained width lets the wordmark
+   stack onto two lines ("House of / Clarence"). */
+.hoc-logo {
+  font-family: var(--hoc-font-display);
+  font-weight: 400;
+  font-size: clamp(3rem, 1.6rem + 2.4vw, 5.2rem); /* 30–52px */
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--hoc-ink-strong);
+  text-decoration: none;
+  max-width: 6.5em;
+}
+.hoc-logo img {
+  display: block;
+  height: clamp(36px, 5vw, 56px);
+  width: auto;
+  max-width: 100%;
+}
+
+/* Primary navigation (desktop). */
+.hoc-nav {
+  display: none;
+  align-items: center;
+  gap: var(--s-4);
+}
+@media (min-width: 1024px) {
+  .hoc-nav {
+    display: flex;
+  }
+}
+.hoc-nav__link {
+  font-family: var(--hoc-font-body);
+  font-size: var(--t-small);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hoc-sage-soft);
+  text-decoration: none;
+  padding-block: 0.4rem;
+  border-bottom: 1px solid transparent;
+  transition: color var(--hoc-speed) var(--hoc-ease),
+    border-color var(--hoc-speed) var(--hoc-ease);
+}
+.hoc-nav__link:hover,
+.hoc-nav__link[aria-current],
+.hoc-nav__link.is-active {
+  color: var(--hoc-ink);
+  border-bottom-color: var(--hoc-brass);
+}
+
+/* Trailing icon buttons (search / account / ideabook / bag). */
+.hoc-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.hoc-iconbtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--hoc-ink);
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity var(--hoc-speed) var(--hoc-ease);
+}
+.hoc-iconbtn:hover {
+  opacity: 0.65;
+}
+/* Hide account + ideabook on small screens (kept in the drawer instead). */
+@media (max-width: 1023px) {
+  .hoc-iconbtn--desktop {
+    display: none;
+  }
+}
+.hoc-burger {
+  display: inline-flex;
+}
+@media (min-width: 1024px) {
+  .hoc-burger {
+    display: none;
+  }
+}
+
+/* Cart count bubble. */
+.hoc-cart-count {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--hoc-brass);
+  color: var(--hoc-paper);
+  font-family: var(--hoc-font-mono);
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+}
+.hoc-cart-count[hidden] {
+  display: none;
+}
+
+/* ==========================================================================
+   Mobile menu drawer (off-canvas) — accordion nav
+   ========================================================================== */
+.hoc-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  visibility: hidden;
+  pointer-events: none;
+}
+.hoc-drawer.is-open {
+  visibility: visible;
+  pointer-events: auto;
+}
+.hoc-drawer__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(32, 32, 29, 0.4);
+  opacity: 0;
+  transition: opacity var(--hoc-speed) var(--hoc-ease);
+}
+.hoc-drawer.is-open .hoc-drawer__overlay {
+  opacity: 1;
+}
+.hoc-drawer__panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(86vw, 380px);
+  background: var(--hoc-paper);
+  padding: var(--s-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  transform: translateX(-100%);
+  transition: transform var(--hoc-speed) var(--hoc-ease);
+  overflow-y: auto;
+}
+.hoc-drawer.is-open .hoc-drawer__panel {
+  transform: translateX(0);
+}
+.hoc-drawer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid var(--hoc-stone-line);
+}
+.hoc-drawer__link {
+  display: block;
+  padding: var(--s-2) 0;
+  border-bottom: 1px solid var(--hoc-stone-line);
+  font-family: var(--hoc-font-body);
+  font-size: var(--t-body-l);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--hoc-ink);
+  text-decoration: none;
+}
+.hoc-drawer__utility {
+  margin-top: auto;
+  padding-top: var(--s-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+/* ==========================================================================
+   Footer — sage ground, canvas text, brass hairlines
+   ========================================================================== */
+.hoc-footer {
+  background-color: var(--hoc-footer-bg);
+  color: var(--hoc-canvas);
+}
+.hoc-footer a {
+  color: var(--hoc-canvas);
+  text-decoration: none;
+  transition: color var(--hoc-speed) var(--hoc-ease);
+}
+.hoc-footer a:hover {
+  color: var(--hoc-brass);
+}
+.hoc-footer__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-5) var(--s-4);
+  padding-block: clamp(var(--s-6), 8vw, var(--s-8));
+}
+@media (min-width: 768px) {
+  .hoc-footer__grid {
+    grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+  }
+}
+.hoc-footer__brand {
+  grid-column: 1 / -1;
+}
+@media (min-width: 768px) {
+  .hoc-footer__brand {
+    grid-column: auto;
+  }
+}
+.hoc-footer__logo {
+  font-family: var(--hoc-font-display);
+  font-size: var(--t-h3);
+  letter-spacing: -0.01em;
+  color: var(--hoc-canvas);
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: var(--s-3);
+}
+.hoc-footer__tagline {
+  font-family: var(--hoc-font-body);
+  font-size: var(--t-body);
+  line-height: 1.55;
+  color: rgba(234, 231, 224, 0.75);
+  max-width: 30ch;
+}
+.hoc-footer__col h3 {
+  font-family: var(--hoc-font-mono);
+  font-size: var(--t-mono);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(234, 231, 224, 0.6);
+  margin: 0 0 var(--s-3);
+}
+.hoc-footer__col ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.hoc-footer__col li {
+  font-family: var(--hoc-font-body);
+  font-size: var(--t-body);
+}
+.hoc-footer__newsletter label {
+  display: block;
+  font-family: var(--hoc-font-mono);
+  font-size: var(--t-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(234, 231, 224, 0.6);
+  margin-bottom: var(--s-2);
+}
+.hoc-footer__newsletter .hoc-field-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(234, 231, 224, 0.4);
+}
+.hoc-footer__newsletter input[type='email'] {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  padding: var(--s-2) 0;
+  color: var(--hoc-canvas);
+  font-family: var(--hoc-font-body);
+  font-size: var(--t-body);
+}
+.hoc-footer__newsletter input[type='email']::placeholder {
+  color: rgba(234, 231, 224, 0.5);
+}
+.hoc-footer__newsletter input[type='email']:focus {
+  outline: none;
+  border-bottom-color: var(--hoc-brass);
+}
+.hoc-footer__newsletter button {
+  background: none;
+  border: 0;
+  color: var(--hoc-canvas);
+  cursor: pointer;
+  padding: var(--s-1);
+}
+.hoc-footer__bottom {
+  border-top: 1px solid rgba(154, 123, 79, 0.4); /* brass hairline */
+}
+.hoc-footer__bottom-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--s-2);
+  padding-block: var(--s-3);
+  font-family: var(--hoc-font-mono);
+  font-size: var(--t-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(234, 231, 224, 0.6);
+}
+
+/* ==========================================================================
+   "Your bag" cart drawer
+   Visibility is controlled by a `hoc-cart-open` class on <body>, so AJAX
+   re-renders of the inner HTML never lose the open state.
+   ========================================================================== */
+.hoc-cartdrawer {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  visibility: hidden;
+  pointer-events: none;
+}
+body.hoc-cart-open .hoc-cartdrawer {
+  visibility: visible;
+  pointer-events: auto;
+}
+.hoc-cartdrawer__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 28, 24, 0.4);
+  opacity: 0;
+  transition: opacity var(--hoc-speed) var(--hoc-ease);
+}
+body.hoc-cart-open .hoc-cartdrawer__overlay {
+  opacity: 1;
+}
+.hoc-cartdrawer__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(92vw, 440px);
+  background: var(--hoc-paper);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--hoc-speed) var(--hoc-ease);
+  box-shadow: -1px 0 0 rgba(28, 28, 24, 0.06);
+}
+body.hoc-cart-open .hoc-cartdrawer__panel {
+  transform: translateX(0);
+}
+.hoc-cartdrawer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s-3);
+  border-bottom: 1px solid var(--hoc-stone-line);
+}
+.hoc-cartdrawer__count {
+  color: var(--hoc-stone);
+}
+.hoc-cartdrawer__empty {
+  padding: var(--s-5) var(--s-3);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+}
+.hoc-cartdrawer__items {
+  list-style: none;
+  margin: 0;
+  padding: var(--s-3);
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.hoc-cartline {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: var(--s-2);
+  padding-bottom: var(--s-3);
+  border-bottom: 1px solid var(--hoc-stone-line);
+}
+.hoc-cartline__media {
+  display: block;
+  aspect-ratio: 4 / 5;
+  background: var(--hoc-canvas);
+  overflow: hidden;
+}
+.hoc-cartline__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hoc-cartline__title {
+  font-family: var(--hoc-font-display);
+  font-size: var(--t-h3);
+  line-height: 1.15;
+  color: var(--hoc-ink);
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.hoc-cartline__caption {
+  display: block;
+  color: var(--hoc-stone);
+  margin-bottom: var(--s-2);
+}
+.hoc-cartline__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+.hoc-cartline__remove {
+  font-family: var(--hoc-font-mono);
+  font-size: var(--t-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--hoc-stone);
+  background: none;
+  border: 0;
+  padding: 0;
+  margin-top: var(--s-1);
+  cursor: pointer;
+}
+
+/* Quantity stepper */
+.hoc-qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--hoc-stone-line);
+  border-radius: var(--hoc-radius);
+}
+.hoc-qty__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 0;
+  color: var(--hoc-ink);
+  cursor: pointer;
+}
+.hoc-qty__btn .hoc-icon {
+  width: 14px;
+  height: 14px;
+}
+.hoc-qty__val {
+  min-width: 28px;
+  text-align: center;
+  font-family: var(--hoc-font-mono);
+  font-size: var(--t-small);
+}
+
+.hoc-cartdrawer__footer {
+  padding: var(--s-3);
+  border-top: 1px solid var(--hoc-stone-line);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.hoc-cartdrawer__subtotal {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.hoc-cartdrawer__note {
+  color: var(--hoc-stone);
+  margin: 0;
+}
+.hoc-cartdrawer__viewbag {
+  align-self: center;
+  margin-top: var(--s-1);
+}
+
+/* Loading state on the add button */
+.hoc-btn.is-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Predictive search drawer (slides down from the top)
+   ========================================================================== */
+.hoc-search {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  visibility: hidden;
+  pointer-events: none;
+}
+body.hoc-search-open .hoc-search {
+  visibility: visible;
+  pointer-events: auto;
+}
+.hoc-search__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 28, 24, 0.4);
+  opacity: 0;
+  transition: opacity var(--hoc-speed) var(--hoc-ease);
+}
+body.hoc-search-open .hoc-search__overlay {
+  opacity: 1;
+}
+.hoc-search__panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--hoc-paper);
+  padding: var(--s-3) var(--hoc-gutter) var(--s-4);
+  transform: translateY(-100%);
+  transition: transform var(--hoc-speed) var(--hoc-ease);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+body.hoc-search-open .hoc-search__panel {
+  transform: translateY(0);
+}
+.hoc-search__form {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  max-width: var(--hoc-container);
+  margin-inline: auto;
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid var(--hoc-ink);
+}
+.hoc-search__form .hoc-icon-wrap {
+  display: inline-flex;
+  color: var(--hoc-stone);
+}
+.hoc-search__form input[type='search'] {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  font-family: var(--hoc-font-display);
+  font-size: var(--t-h2);
+  color: var(--hoc-ink);
+  padding: var(--s-1) 0;
+}
+.hoc-search__form input[type='search']:focus {
+  outline: none;
+}
+.hoc-search__form input::placeholder {
+  color: var(--hoc-stone);
+}
+.hoc-search__results {
+  max-width: var(--hoc-container);
+  margin-inline: auto;
+  padding-top: var(--s-3);
+}
+.hoc-search__hint {
+  color: var(--hoc-stone);
+}
+.hoc-search__list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-2);
+}
+@media (min-width: 768px) {
+  .hoc-search__list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--s-2) var(--s-5);
+  }
+}
+.hoc-search__result {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-1) 0;
+  text-decoration: none;
+  color: var(--hoc-ink);
+  border-bottom: 1px solid var(--hoc-stone-line);
+}
+.hoc-search__thumb {
+  flex: 0 0 56px;
+  width: 56px;
+  height: 70px;
+  background: var(--hoc-canvas);
+  overflow: hidden;
+}
+.hoc-search__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hoc-search__title {
+  display: block;
+  font-family: var(--hoc-font-display);
+  font-size: var(--t-h3);
+  line-height: 1.15;
+}
+.hoc-search__meta .hoc-specimen {
+  color: var(--hoc-stone);
+}
+.hoc-search__all {
+  display: inline-flex;
+  margin-top: var(--s-3);
+}
+
+/* ==========================================================================
+   Forms & inputs (prd.md §6) — underline style, mono labels above
+   ========================================================================== */
+.hoc-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: var(--s-3);
+}
+.hoc-field > label,
+.hoc-field-label {
+  font-family: var(--hoc-font-mono);
+  font-size: var(--t-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hoc-stone);
+}
+.hoc-field input,
+.hoc-field textarea,
+.hoc-field select {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--hoc-stone-line);
+  background: transparent;
+  padding: 0.8rem 0;
+  font-family: var(--hoc-font-body);
+  font-size: var(--t-body);
+  color: var(--hoc-ink);
+  border-radius: 0;
+}
+.hoc-field textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+.hoc-field input:focus,
+.hoc-field textarea:focus,
+.hoc-field select:focus {
+  outline: none;
+  border-bottom-color: var(--hoc-brass-deep);
+}
+.hoc-field input::placeholder,
+.hoc-field textarea::placeholder {
+  color: var(--hoc-stone);
+}
+.hoc-form__error {
+  color: var(--hoc-error);
+  font-size: var(--t-small);
+  margin-bottom: var(--s-2);
+}
+.hoc-form__success {
+  color: var(--hoc-success);
+  font-family: var(--hoc-font-body);
+  margin-bottom: var(--s-3);
+}
+@media (min-width: 600px) {
+  .hoc-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-3);
+  }
+}

@@ -1,0 +1,36 @@
+{% comment %}
+  House of Clarence — price
+  Prices are stated plainly, never sold (prd.md §3). No "SALE", no red, no
+  countdowns. If a price is genuinely reduced we simply show the lower figure;
+  the old price may appear as a quiet hairline strikethrough (no word "SALE").
+
+  Format: £1,397 (no .00 unless pence are meaningful), with an optional
+  ex-VAT caption in mono for trade credibility: "£1,397 · £1,164 ex. VAT".
+
+  Parameters:
+    price      (required) — amount in cents (e.g. product.price)
+    compare_at (optional) — original amount in cents, if reduced
+    show_exvat (optional) — boolean, default false
+    vat_rate   (optional) — e.g. 1.2 for UK 20%, default 1.2
+{% endcomment %}
+
+{%- liquid
+  assign show_ex = show_exvat | default: false, allow_false: true
+  assign rate = vat_rate | default: 1.2
+-%}
+
+<span class="hoc-priceline">
+  {%- if price == 0 or price == blank -%}
+    {%- comment %} No price set yet — show a premium, trade-appropriate placeholder. {% endcomment -%}
+    <span class="hoc-specimen__price">Price on application</span>
+  {%- else -%}
+    {%- if compare_at and compare_at > price -%}
+      <s class="hoc-price-was">{{ compare_at | money_without_trailing_zeros }}</s>
+    {%- endif -%}
+    <span class="hoc-specimen__price">{{ price | money_without_trailing_zeros }}</span>
+    {%- if show_ex -%}
+      {%- assign ex_cents = price | divided_by: rate | divided_by: 100 | round | times: 100 -%}
+      <span class="hoc-exvat">· {{ ex_cents | money_without_trailing_zeros }} ex. VAT</span>
+    {%- endif -%}
+  {%- endif -%}
+</span>

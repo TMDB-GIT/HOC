@@ -1,0 +1,43 @@
+{%- comment -%}
+  House of Clarence — specimen metadata string
+  Prints the material/finish descriptor for the Specimen Label, e.g.
+  "WHITE OAK · FLUTED". Source priority:
+    1. Metafields  custom.material / custom.finish  (most precise)
+    2. Product tags (first two meaningful tags — skips catalogue/code tags)
+    3. Product type (fallback)
+  Parameter: product (required)
+{%- endcomment -%}
+{%- liquid
+  assign material = product.metafields.custom.material.value
+  assign finish = product.metafields.custom.finish.value
+  assign parts = ''
+  if material != blank
+    assign parts = material
+  endif
+  if finish != blank
+    if parts != blank
+      assign parts = parts | append: ' · ' | append: finish
+    else
+      assign parts = finish
+    endif
+  endif
+  if parts == blank
+    assign count = 0
+    for t in product.tags
+      assign tl = t | downcase
+      unless tl contains 'catalogue' or tl contains 'code:'
+        if count < 2
+          if parts != blank
+            assign parts = parts | append: ' · '
+          endif
+          assign parts = parts | append: t
+          assign count = count | plus: 1
+        endif
+      endunless
+    endfor
+  endif
+  if parts == blank
+    assign parts = product.type
+  endif
+-%}
+{{- parts | upcase -}}

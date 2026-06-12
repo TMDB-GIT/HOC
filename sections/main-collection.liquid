@@ -1,0 +1,182 @@
+{% comment %}
+  House of Clarence — Collection page (prd.md §8.2)
+  Editorial header (eyebrow + serif title + intro + banner image), a left filter
+  rail (from Shopify's native filters / Search & Discovery), specimen product
+  grid (3-up), quiet sort, and pagination.
+
+  Filters degrade gracefully: if no storefront filters are configured, the rail
+  is hidden and the grid runs full width.
+{% endcomment %}
+
+<script src="{{ 'hoc-collection.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign has_filters = false
+  if collection.filters.size > 0
+    assign has_filters = true
+  endif
+-%}
+
+<div class="hoc-collection">
+  {%- comment %} Editorial header {% endcomment -%}
+  <header class="hoc-collection__header hoc-container">
+    <div class="hoc-collection__intro">
+      <span class="hoc-eyebrow">{{ collection.title | default: 'Collection' }}</span>
+      <h1 class="hoc-h1 hoc-collection__title">
+        {{ section.settings.heading | default: collection.title }}
+      </h1>
+      {%- if collection.description != blank -%}
+        <div class="hoc-body-l hoc-collection__desc">{{ collection.description }}</div>
+      {%- elsif section.settings.intro != blank -%}
+        <p class="hoc-body-l hoc-collection__desc">{{ section.settings.intro }}</p>
+      {%- endif -%}
+    </div>
+  </header>
+
+  {%- if collection.image and section.settings.show_image -%}
+    <div class="hoc-collection__banner hoc-container">
+      <img
+        src="{{ collection.image | image_url: width: 2000 }}"
+        srcset="{{ collection.image | image_url: width: 800 }} 800w, {{ collection.image | image_url: width: 1400 }} 1400w, {{ collection.image | image_url: width: 2000 }} 2000w"
+        sizes="100vw"
+        alt="{{ collection.image.alt | escape }}"
+        width="{{ collection.image.width }}"
+        height="{{ collection.image.height }}"
+        loading="lazy"
+      >
+    </div>
+  {%- endif -%}
+
+  <div class="hoc-container hoc-collection__body{% unless has_filters %} hoc-collection__body--nofilters{% endunless %}">
+    {%- comment %} Filter rail {% endcomment -%}
+    {%- if has_filters -%}
+      <aside class="hoc-rail" id="hoc-filters">
+        <form method="get" data-hoc-filter-form>
+          {%- comment %} Preserve the current sort when filtering {% endcomment -%}
+          {%- if collection.sort_by != blank -%}
+            <input type="hidden" name="sort_by" value="{{ collection.sort_by }}">
+          {%- endif -%}
+
+          {%- for filter in collection.filters -%}
+            <div class="hoc-rail__group">
+              <h3 class="hoc-eyebrow hoc-rail__heading">{{ filter.label }}</h3>
+              {%- case filter.type -%}
+                {%- when 'list', 'boolean' -%}
+                  <ul class="hoc-rail__list">
+                    {%- for value in filter.values -%}
+                      <li>
+                        <label class="hoc-rail__option{% if value.active %} is-active{% endif %}">
+                          <input
+                            type="checkbox"
+                            name="{{ value.param_name }}"
+                            value="{{ value.value }}"
+                            {% if value.active %}checked{% endif %}
+                            {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                          >
+                          <span>{{ value.label }}</span>
+                          <span class="hoc-rail__count">{{ value.count }}</span>
+                        </label>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- when 'price_range' -%}
+                  <div class="hoc-rail__price">
+                    <label>
+                      <span class="hoc-small">From</span>
+                      <input type="number" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value }}" min="0" placeholder="0">
+                    </label>
+                    <label>
+                      <span class="hoc-small">To</span>
+                      <input type="number" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value }}" min="0" placeholder="{{ filter.range_max | money_without_currency }}">
+                    </label>
+                  </div>
+              {%- endcase -%}
+            </div>
+          {%- endfor -%}
+
+          <noscript><button type="submit" class="hoc-btn hoc-btn--secondary hoc-btn--full">Apply filters</button></noscript>
+        </form>
+      </aside>
+    {%- endif -%}
+
+    {%- comment %} Results {% endcomment -%}
+    <div class="hoc-collection__results">
+      <div class="hoc-collection__toolbar">
+        <span class="hoc-specimen hoc-collection__count">
+          {{ collection.products_count }} {% if collection.products_count == 1 %}specimen{% else %}specimens{% endif %}
+        </span>
+
+        {%- comment %} Active filter pills {% endcomment -%}
+        {%- if collection.filters.size > 0 -%}
+          <div class="hoc-active-filters">
+            {%- for filter in collection.filters -%}
+              {%- for value in filter.active_values -%}
+                <a href="{{ value.url_to_remove }}" class="hoc-pill">
+                  {{ value.label }} {% render 'hoc-icon', name: 'close' %}
+                </a>
+              {%- endfor -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        <form method="get" class="hoc-sort" data-hoc-sort-form>
+          <label for="hoc-sort" class="hoc-eyebrow">Sort</label>
+          <select id="hoc-sort" name="sort_by" data-hoc-sort>
+            {%- assign current_sort = collection.sort_by | default: collection.default_sort_by -%}
+            {%- for option in collection.sort_options -%}
+              <option value="{{ option.value }}" {% if option.value == current_sort %}selected{% endif %}>
+                {% if option.value == 'manual' %}Curated{% else %}{{ option.name }}{% endif %}
+              </option>
+            {%- endfor -%}
+          </select>
+        </form>
+      </div>
+
+      {%- paginate collection.products by section.settings.products_per_page -%}
+        {%- if collection.products.size > 0 -%}
+          <div class="hoc-grid hoc-grid--3">
+            {%- for product in collection.products -%}
+              {%- comment %} Skip Dawn's sample "example" products (delete them in admin to remove permanently) {% endcomment -%}
+              {%- unless product.handle contains 'example-product' or product.handle contains 'asset-pack' -%}
+                {% render 'hoc-product-card', product: product, layout: 'collection' %}
+              {%- endunless -%}
+            {%- endfor -%}
+          </div>
+
+          {%- if paginate.pages > 1 -%}
+            <nav class="hoc-pagination" aria-label="Pagination">
+              {%- if paginate.next -%}
+                <a href="{{ paginate.next.url }}" class="hoc-btn hoc-btn--secondary">Load more specimens</a>
+              {%- endif -%}
+              <div class="hoc-pagination__pages hoc-specimen">
+                {%- for part in paginate.parts -%}
+                  {%- if part.is_link -%}
+                    <a href="{{ part.url }}">{{ part.title }}</a>
+                  {%- else -%}
+                    <span class="{% if part.title == paginate.current_page %}is-current{% endif %}">{{ part.title }}</span>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </nav>
+          {%- endif -%}
+        {%- else -%}
+          <p class="hoc-body-l hoc-collection__empty">
+            Nothing here yet — start with the rooms.
+          </p>
+        {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading override", "info": "Defaults to the collection title." },
+    { "type": "textarea", "id": "intro", "label": "Intro (if collection has no description)" },
+    { "type": "checkbox", "id": "show_image", "label": "Show collection banner image", "default": true },
+    { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 6, "max": 24, "step": 3, "default": 12 }
+  ]
+}
+{% endschema %}
