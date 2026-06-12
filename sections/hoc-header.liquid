@@ -16,7 +16,11 @@
   assign show_ideabook = section.settings.show_ideabook
 -%}
 
-<header class="hoc-header" data-hoc-header>
+<header
+  class="hoc-header{% if template.name == 'index' and section.settings.overlay_on_home %} hoc-header--overlay{% endif %}"
+  data-hoc-header
+  {% if template.name == 'index' and section.settings.overlay_on_home %}data-hoc-overlay{% endif %}
+>
   <div class="hoc-container hoc-header__inner">
     {%- comment %} Mobile: burger {% endcomment -%}
     <button
@@ -146,6 +150,13 @@
       "id": "menu",
       "label": "Navigation menu",
       "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "overlay_on_home",
+      "label": "Transparent header over the homepage hero",
+      "info": "The header overlays the full-screen hero (light text), turning solid on hover and on scroll.",
+      "default": true
     },
     {
       "type": "header",

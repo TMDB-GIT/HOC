@@ -8,14 +8,22 @@
 (function () {
   'use strict';
 
-  /* ---- Sticky header shading ------------------------------------------ */
+  /* ---- Sticky header shading + transparent-overlay solidify ----------- */
   var header = document.querySelector('[data-hoc-header]');
   if (header) {
+    var isOverlay = header.hasAttribute('data-hoc-overlay');
+    var hero = document.querySelector('.hoc-hero-banner');
     var onScroll = function () {
       header.classList.toggle('is-scrolled', window.scrollY > 8);
+      if (isOverlay) {
+        // Stay transparent over the hero; go solid as the hero scrolls away.
+        var threshold = hero ? hero.offsetHeight - header.offsetHeight : 200;
+        header.classList.toggle('is-solid', window.scrollY > threshold);
+      }
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
   }
 
   /* ---- Mobile drawer --------------------------------------------------- */

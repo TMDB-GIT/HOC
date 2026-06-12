@@ -275,6 +275,67 @@
   }
 }
 
+/* --------------------------------------------------------------------------
+   Transparent overlay header on the landing hero.
+   Floats over the full-screen hero with light text; turns solid (paper, ink
+   text) on hover/focus and once scrolled past the hero. JS adds `is-solid`.
+   -------------------------------------------------------------------------- */
+.hoc-header--overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  background-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom-color: transparent;
+  box-shadow: none;
+  transition: background-color 0.3s var(--hoc-ease), border-color 0.3s var(--hoc-ease);
+}
+.hoc-header--overlay .hoc-logo,
+.hoc-header--overlay .hoc-iconbtn,
+.hoc-header--overlay .hoc-burger {
+  color: var(--hoc-canvas);
+  transition: color 0.3s var(--hoc-ease);
+}
+.hoc-header--overlay .hoc-nav__link {
+  color: rgba(252, 249, 242, 0.82);
+  transition: color 0.3s var(--hoc-ease), border-color 0.3s var(--hoc-ease);
+}
+.hoc-header--overlay .hoc-nav__link:hover,
+.hoc-header--overlay .hoc-nav__link.is-active {
+  color: var(--hoc-canvas);
+  border-bottom-color: var(--hoc-brass);
+}
+
+/* Solid state — scrolled past the hero, or hover/keyboard focus on the header. */
+.hoc-header--overlay.is-solid,
+.hoc-header--overlay:hover,
+.hoc-header--overlay:focus-within {
+  background-color: rgba(246, 244, 239, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom-color: var(--hoc-stone-line);
+}
+.hoc-header--overlay.is-solid .hoc-logo,
+.hoc-header--overlay:hover .hoc-logo,
+.hoc-header--overlay:focus-within .hoc-logo {
+  color: var(--hoc-ink-strong);
+}
+.hoc-header--overlay.is-solid .hoc-nav__link,
+.hoc-header--overlay:hover .hoc-nav__link,
+.hoc-header--overlay:focus-within .hoc-nav__link {
+  color: var(--hoc-sage-soft);
+}
+.hoc-header--overlay.is-solid .hoc-iconbtn,
+.hoc-header--overlay:hover .hoc-iconbtn,
+.hoc-header--overlay:focus-within .hoc-iconbtn,
+.hoc-header--overlay.is-solid .hoc-burger,
+.hoc-header--overlay:hover .hoc-burger,
+.hoc-header--overlay:focus-within .hoc-burger {
+  color: var(--hoc-ink);
+}
+
 /* Cart count bubble. */
 .hoc-cart-count {
   position: absolute;
