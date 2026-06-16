@@ -19,5 +19,4 @@ kitchen tile comes from the client's own render and is **not** stock.
 | `hoc-hero-kitchen.jpg` | (spare, unused) | Earlier hero photo | — |
 
 Crops/resizes were made at the exact slot sizes (tiles 1200×1200, editorial
-1600×1200, page header 2000×1125, hero 2560×1920). Regeneration script for the
-old abstract placeholders remains at `docs/generate-placeholders.py`.
+1600×1200, page header 2000×1125, hero 2560×1920).

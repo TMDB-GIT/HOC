@@ -136,6 +136,16 @@
   min-height: 100vh;
   min-height: 100svh;
 }
+/* Short / landscape viewports: the fixed 55vh top offset is taller than the
+   content area, so the top-anchored eyebrow → headline → CTA stack overflows
+   past the fold (min-height is a floor, not a ceiling). Ease the offset and
+   trim the base padding so the CTA stays visible without scrolling. */
+@media (max-height: 640px) {
+  .hoc-hero-banner {
+    padding-top: clamp(var(--s-4), 22vh, 14rem);
+    padding-bottom: var(--s-4);
+  }
+}
 .hoc-hero-banner__media {
   position: absolute;
   inset: 0;
