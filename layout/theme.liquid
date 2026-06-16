@@ -7,6 +7,44 @@
     <meta name="theme-color" content="">
     <link rel="canonical" href="{{ canonical_url }}">
 
+    {%- comment %} House of Clarence intro reveal — decide before paint so there is no flash.
+       Shows once per browser session; never for prefers-reduced-motion. {% endcomment -%}
+    <script>
+      (function () {
+        try {
+          if (
+            !sessionStorage.getItem('hoc-intro-seen') &&
+            !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ) {
+            document.documentElement.classList.add('hoc-intro-active');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      #hoc-intro { display: none; }
+      .hoc-intro-active { overflow: hidden; }
+      .hoc-intro-active #hoc-intro {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--hoc-sage, #3B4138);
+        cursor: pointer;
+        transition: opacity 0.6s ease;
+      }
+      .hoc-intro-active #hoc-intro.is-hiding { opacity: 0; }
+      #hoc-intro__logo {
+        width: min(62vw, 540px);
+        height: auto;
+        clip-path: inset(0 100% 0 0);
+        transition: clip-path 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .hoc-intro-active #hoc-intro.is-drawn #hoc-intro__logo { clip-path: inset(0 0 0 0); }
+    </style>
+
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
     {%- endif -%}
@@ -301,6 +339,7 @@
       })();
     </script>
     <script src="{{ 'hoc-reveal.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'hoc-intro.js' | asset_url }}" defer="defer"></script>
 
     <link rel="stylesheet" href="{{ 'component-cart-items.css' | asset_url }}" media="print" onload="this.media='all'">
 
@@ -345,6 +384,19 @@
   </head>
 
   <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
+    {%- comment %} House of Clarence intro reveal overlay — animated by hoc-intro.js,
+       hidden by default unless .hoc-intro-active is set (see <head>). {% endcomment -%}
+    <div id="hoc-intro" role="presentation" aria-hidden="true">
+      <img
+        id="hoc-intro__logo"
+        src="{{ 'hoc-logo-white.png' | asset_url }}"
+        alt=""
+        width="2669"
+        height="173"
+        fetchpriority="high"
+      >
+    </div>
+
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
       {{ 'accessibility.skip_to_text' | t }}
     </a>
