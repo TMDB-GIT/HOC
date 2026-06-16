@@ -12,13 +12,12 @@
   var header = document.querySelector('[data-hoc-header]');
   if (header) {
     var isOverlay = header.hasAttribute('data-hoc-overlay');
-    var hero = document.querySelector('.hoc-hero-banner');
     var onScroll = function () {
-      header.classList.toggle('is-scrolled', window.scrollY > 8);
+      var scrolled = window.scrollY > 8;
+      header.classList.toggle('is-scrolled', scrolled);
       if (isOverlay) {
-        // Stay transparent over the hero; go solid as the hero scrolls away.
-        var threshold = hero ? hero.offsetHeight - header.offsetHeight : 200;
-        header.classList.toggle('is-solid', window.scrollY > threshold);
+        // Transparent only at the very top; go solid the moment the user scrolls.
+        header.classList.toggle('is-solid', scrolled);
       }
     };
     onScroll();

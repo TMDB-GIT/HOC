@@ -205,6 +205,29 @@
   max-width: 100%;
 }
 
+/* Wide hairline wordmark (bundled white PNG). Slim single-line lockup. */
+.hoc-logo--wordmark {
+  max-width: none; /* override the text wordmark's 6.5em cap */
+  line-height: 0;
+}
+/* Scoped under .hoc-logo--wordmark so it beats the base `.hoc-logo img` rule. */
+.hoc-logo--wordmark .hoc-logo__img {
+  display: block;
+  height: clamp(12px, 0.4vw + 9px, 15px);
+  width: auto;
+  max-width: min(56vw, 300px);
+  object-fit: contain;
+  transition: filter 0.3s var(--hoc-ease);
+}
+/* The PNG is white (for the transparent header over the hero). Darken it to ink
+   wherever the header sits on a light surface (solid pages + scrolled/hover). */
+.hoc-header:not(.hoc-header--overlay) .hoc-logo__img,
+.hoc-header--overlay.is-solid .hoc-logo__img,
+.hoc-header--overlay:hover .hoc-logo__img,
+.hoc-header--overlay:focus-within .hoc-logo__img {
+  filter: brightness(0);
+}
+
 /* Primary navigation (desktop). */
 .hoc-nav {
   display: none;

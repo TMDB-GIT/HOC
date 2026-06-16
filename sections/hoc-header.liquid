@@ -34,19 +34,29 @@
       {% render 'hoc-icon', name: 'menu' %}
     </button>
 
-    {%- comment %} Logo: image if supplied, otherwise the wordmark {% endcomment -%}
-    <a href="{{ routes.root_url }}" class="hoc-logo">
-      {%- if section.settings.logo != blank -%}
+    {%- comment %} Logo: theme-editor image, else bundled wordmark, else text {% endcomment -%}
+    {%- if section.settings.logo != blank -%}
+      <a href="{{ routes.root_url }}" class="hoc-logo">
         <img
           src="{{ section.settings.logo | image_url: width: 480 }}"
           alt="{{ shop.name | escape }}"
           width="{{ section.settings.logo.width }}"
           height="{{ section.settings.logo.height }}"
         >
-      {%- else -%}
-        {{ shop.name }}
-      {%- endif -%}
-    </a>
+      </a>
+    {%- elsif section.settings.default_logo_filename != blank -%}
+      <a href="{{ routes.root_url }}" class="hoc-logo hoc-logo--wordmark">
+        <img
+          class="hoc-logo__img"
+          src="{{ section.settings.default_logo_filename | asset_url }}"
+          alt="{{ shop.name | escape }}"
+          width="2669"
+          height="173"
+        >
+      </a>
+    {%- else -%}
+      <a href="{{ routes.root_url }}" class="hoc-logo">{{ shop.name }}</a>
+    {%- endif -%}
 
     {%- comment %} Desktop navigation {% endcomment -%}
     {%- if menu != blank -%}
@@ -143,7 +153,14 @@
       "type": "image_picker",
       "id": "logo",
       "label": "Logo image",
-      "info": "Optional. If empty, the shop name is shown as a serif wordmark."
+      "info": "Optional. Overrides the bundled wordmark below. If both are empty, the shop name shows as a serif wordmark."
+    },
+    {
+      "type": "text",
+      "id": "default_logo_filename",
+      "label": "Bundled logo filename (in /assets)",
+      "default": "hoc-logo-white.png",
+      "info": "White wordmark used when no Logo image is chosen above. Darkens automatically on the solid header."
     },
     {
       "type": "link_list",

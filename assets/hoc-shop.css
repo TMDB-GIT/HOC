@@ -125,10 +125,11 @@
   width: 100%;
   min-height: 72vh;
   display: flex;
-  align-items: flex-end;
+  /* Headline sits in the upper third, on the clean wall above the furniture. */
+  align-items: flex-start;
   justify-content: center;
   overflow: hidden;
-  padding: clamp(var(--s-5), 8vw, var(--s-9)) var(--hoc-gutter);
+  padding: clamp(var(--s-7), 55vh, 40rem) var(--hoc-gutter) clamp(var(--s-5), 8vw, var(--s-9));
 }
 /* Full-screen hero (fills the viewport on load). */
 .hoc-hero-banner--full {
@@ -155,7 +156,13 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(32, 32, 29, 0.55), rgba(32, 32, 29, 0.05) 45%, transparent 70%);
+  background: linear-gradient(
+    to top,
+    rgba(32, 32, 29, 0.62) 0%,
+    rgba(32, 32, 29, 0.34) 42%,
+    rgba(32, 32, 29, 0.12) 66%,
+    transparent 88%
+  );
 }
 /* Top scrim so a transparent overlay header stays legible over bright images. */
 .hoc-hero-banner__media::before {
@@ -172,10 +179,12 @@
   text-align: center;
   max-width: 64rem;
   color: var(--hoc-paper);
+  /* Subtle, image-independent legibility safeguard so text stays AA across crops. */
+  text-shadow: 0 1px 18px rgba(20, 20, 17, 0.35);
   animation: hoc-fade-up 700ms 120ms var(--hoc-ease) both;
 }
 .hoc-hero-banner__eyebrow {
-  color: rgba(246, 244, 239, 0.85);
+  color: rgba(246, 244, 239, 0.92);
   margin-bottom: var(--s-3);
 }
 .hoc-hero-banner__title {

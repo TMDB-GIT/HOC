@@ -3,8 +3,8 @@
     "hero": {
       "type": "hero-banner",
       "settings": {
-        "default_image_filename": "hoc-hero-kitchen-island.jpg",
-        "default_image_alt": "Marble-topped kitchen island with chocolate cabinetry, brass-framed glazing and sage leather bar stools",
+        "default_image_filename": "hoc-hero-living.jpg",
+        "default_image_alt": "A calm living room with a cream curved sofa, brass-detailed coffee tables and warm oak-panelled walls",
         "eyebrow": "For the curated home",
         "heading": "Made to be lived in.",
         "button_label": "Explore the rooms",
@@ -16,10 +16,9 @@
       "blocks": {
         "t1": { "type": "item", "settings": { "icon": "handshake", "text": "Trade & private clients" } },
         "t2": { "type": "item", "settings": { "icon": "delivery", "text": "White-glove delivery" } },
-        "t3": { "type": "item", "settings": { "icon": "shield", "text": "Considered guarantees" } },
-        "t4": { "type": "item", "settings": { "icon": "architecture", "text": "Sister to Market Design & Build" } }
+        "t3": { "type": "item", "settings": { "icon": "shield", "text": "Considered guarantees" } }
       },
-      "block_order": ["t1", "t2", "t3", "t4"]
+      "block_order": ["t1", "t2", "t3"]
     },
     "rooms": {
       "type": "collection-tiles",
