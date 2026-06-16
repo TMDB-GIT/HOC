@@ -13,11 +13,28 @@
       (function () {
         try {
           if (
-            !sessionStorage.getItem('hoc-intro-seen') &&
-            !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            sessionStorage.getItem('hoc-intro-seen') ||
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches
           ) {
-            document.documentElement.classList.add('hoc-intro-active');
+            return;
           }
+          document.documentElement.classList.add('hoc-intro-active');
+          // Fail-safe lives where the lock is created: if hoc-intro.js never loads,
+          // is blocked, or throws, this inline timeout still releases the scroll-lock
+          // and removes the overlay so the user can never be trapped on a blank screen.
+          window.__hocIntroDone = function () {
+            try { sessionStorage.setItem('hoc-intro-seen', '1'); } catch (e) {}
+            document.documentElement.classList.remove('hoc-intro-active');
+            var o = document.getElementById('hoc-intro');
+            if (o && o.parentNode) o.parentNode.removeChild(o);
+            // Also release any background nodes hoc-intro.js marked inert.
+            var marked = document.querySelectorAll('[data-hoc-inert]');
+            for (var i = 0; i < marked.length; i++) {
+              marked[i].removeAttribute('inert');
+              marked[i].removeAttribute('data-hoc-inert');
+            }
+          };
+          window.setTimeout(window.__hocIntroDone, 5000);
         } catch (e) {}
       })();
     </script>
@@ -389,11 +406,11 @@
     <div id="hoc-intro" role="presentation" aria-hidden="true">
       <img
         id="hoc-intro__logo"
-        src="{{ 'hoc-logo-white.png' | asset_url }}"
+        src="{{ 'hoc-logo-white-intro.png' | asset_url }}"
         alt=""
-        width="2669"
-        height="173"
-        fetchpriority="high"
+        width="1080"
+        height="70"
+        decoding="async"
       >
     </div>
 
