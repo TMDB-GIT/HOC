@@ -5,7 +5,7 @@
       "settings": {
         "eyebrow": "The House",
         "heading": "House of Clarence",
-        "intro": "The furnishings and finishes house for homes of substantial value — sister to Market Design & Build. Where the house is built, House of Clarence furnishes it.",
+        "intro": "The furnishings and finishes house for homes of substantial value. Where the house is built, House of Clarence furnishes it.",
         "default_image_filename": "hoc-pageheader-about.jpg",
         "default_image_alt": "A quiet sitting room glimpsed through bronze-tinted glass doors"
       }
@@ -19,7 +19,7 @@
         "surface": "paper",
         "eyebrow": "Our standard",
         "heading": "A considered standard of care",
-        "text": "<p>We bring the same rigour to furnishing a home as our sister company brings to building it. Every piece is chosen for material honesty, provenance and longevity — vanities, baths, brassware, kitchens, lighting and joinery, made to be lived in.</p>",
+        "text": "<p>We bring the same rigour to furnishing a home as goes into building it. Every piece is chosen for material honesty, provenance and longevity — vanities, baths, brassware, kitchens, lighting and joinery, made to be lived in.</p>",
         "button_label": "Explore the rooms"
       }
     },

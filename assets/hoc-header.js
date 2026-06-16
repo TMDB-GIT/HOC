@@ -8,14 +8,38 @@
 (function () {
   'use strict';
 
-  /* ---- Sticky header shading ------------------------------------------ */
+  /* ---- Sticky header shading + transparent-overlay solidify ----------- */
   var header = document.querySelector('[data-hoc-header]');
   if (header) {
+    var isOverlay = header.hasAttribute('data-hoc-overlay');
+
+    // Liquid turns the overlay on for the homepage, but it can't see what's
+    // actually beneath the header (the header group renders before <main>).
+    // Only stay transparent when a hero banner — which carries its own top
+    // scrim for contrast — genuinely leads the page. If a merchant reorders
+    // the homepage so a light section is first, drop the overlay so the header
+    // never renders white-on-light and invisible.
+    if (isOverlay) {
+      var main = document.getElementById('MainContent');
+      var firstSection = main && main.firstElementChild;
+      var leadsWithHero = firstSection && firstSection.querySelector('.hoc-hero-banner');
+      if (!leadsWithHero) {
+        isOverlay = false;
+        header.classList.remove('hoc-header--overlay');
+      }
+    }
+
     var onScroll = function () {
-      header.classList.toggle('is-scrolled', window.scrollY > 8);
+      var scrolled = window.scrollY > 8;
+      header.classList.toggle('is-scrolled', scrolled);
+      if (isOverlay) {
+        // Transparent only at the very top; go solid the moment the user scrolls.
+        header.classList.toggle('is-solid', scrolled);
+      }
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
   }
 
   /* ---- Mobile drawer --------------------------------------------------- */
