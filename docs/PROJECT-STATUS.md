@@ -5,7 +5,9 @@
 behind the design see [`prd.md`](../prd.md); for the scannable build rules see
 [`CLAUDE.md`](../CLAUDE.md); for Shopify/Git mechanics see
 [`docs/theme-and-version-control.md`](./theme-and-version-control.md); for
-organising the catalogue see [`docs/collections-setup.md`](./collections-setup.md).
+organising the catalogue see [`docs/collections-setup.md`](./collections-setup.md);
+for a running log of changes since the initial build see
+[`docs/CHANGELOG.md`](./CHANGELOG.md).
 
 ---
 
@@ -74,9 +76,12 @@ and previewable, but NOT committed to Git, NOT pushed, and NOT live.**
   specimen), `.hoc-eyebrow`, `.hoc-specimen`, `.hoc-link`.
 - `assets/hoc-components.css` — buttons, header, mobile drawer, footer, trust
   strip, **bag drawer**, **search drawer**, **form fields**.
-- `assets/hoc-shop.css` — product card, hero, room tiles, editorial split, CTA
-  band, collection page, product page, page header, contact.
+- `assets/hoc-shop.css` — product card, hero, "Shop by room" scroller, editorial
+  split, CTA band, collection page, product page, page header, contact.
 - `assets/hoc-header.js` — sticky shading + mobile menu drawer (focus trap).
+- `assets/hoc-room-scroll.js` — "Shop by room" pinned horizontal scroll (desktop,
+  gated on `.hoc-anim`; lead-in/out holds, scroll/hover dim+title reveal). See
+  `docs/CHANGELOG.md` for the full evolution.
 - `assets/hoc-collection.js` — auto-submit sort/filter.
 - `assets/hoc-product.js` — gallery thumbnails + variant picker (live price).
 - `assets/hoc-cart.js` — AJAX add-to-bag + drawer (Section Rendering API).
@@ -124,7 +129,7 @@ and previewable, but NOT committed to Git, NOT pushed, and NOT live.**
   `hoc-footer` (announcement bar removed — no sale theatrics).
 
 **Docs:** `docs/collections-setup.md`, `docs/theme-and-version-control.md`,
-this file.
+`docs/CHANGELOG.md` (running updates log), this file.
 
 ---
 
