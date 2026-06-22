@@ -1,14 +1,31 @@
 {% comment %}
   House of Clarence — Collection / room tiles (prd.md §8.1)
-  Editorial tiles linking to collections, with a mono eyebrow label over big
-  imagery and a gentle vertical stagger. Each tile is a block.
+  "Shop by room" presented as large, individual room panels the visitor moves
+  through one at a time. On desktop (motion allowed) the section pins and the
+  panels translate horizontally as the page is scrolled downwards; under
+  reduced motion / no-JS it degrades to a native horizontal scroll row, and on
+  mobile it stacks into simple vertical tiles. Each panel is a block.
 {% endcomment %}
 
-<section class="hoc-section hoc-collection-tiles">
-  <div class="hoc-container">
+{%- liquid
+  assign pinned = section.settings.pinned
+  assign panel_count = section.blocks.size
+-%}
+
+<section
+  class="hoc-section hoc-collection-tiles hoc-roomscroll"
+  data-room-scroll
+  {% if pinned %}data-room-pinned="true"{% endif %}
+  data-room-leadin="{{ section.settings.lead_in }}"
+  data-room-leadout="{{ section.settings.lead_out }}"
+>
+  <div class="hoc-roomscroll__pin">
     {%- if section.settings.heading != blank or section.settings.link_label != blank -%}
-      <div class="hoc-section-head">
-        <h2 class="hoc-h2">{{ section.settings.heading }}</h2>
+      <div class="hoc-roomscroll__head">
+        <span class="hoc-roomscroll__rule" aria-hidden="true"></span>
+        {%- if section.settings.heading != blank -%}
+          <h2 class="hoc-h2 hoc-roomscroll__title">{{ section.settings.heading }}</h2>
+        {%- endif -%}
         {%- if section.settings.link_label != blank -%}
           <a href="{{ section.settings.link_url | default: routes.collections_url }}" class="hoc-textlink">
             {{ section.settings.link_label }} {% render 'hoc-icon', name: 'arrow' %}
@@ -17,52 +34,64 @@
       </div>
     {%- endif -%}
 
-    <div class="hoc-tiles hoc-tiles--4">
-      {%- for block in section.blocks -%}
-        {%- liquid
-          assign collection = collections[block.settings.collection]
-          assign tile_image = block.settings.image
-          if tile_image == blank and collection != blank
-            assign tile_image = collection.featured_image
-          endif
-          assign tile_label = block.settings.label
-          if tile_label == blank and collection != blank
-            assign tile_label = collection.title
-          endif
-          assign tile_url = block.settings.link
-          if tile_url == blank and collection != blank
-            assign tile_url = collection.url
-          endif
-        -%}
-        <a href="{{ tile_url | default: routes.collections_url }}" class="hoc-tile" {{ block.shopify_attributes }}>
-          {%- if tile_image != blank -%}
-            <img
-              src="{{ tile_image | image_url: width: 700 }}"
-              srcset="{{ tile_image | image_url: width: 400 }} 400w, {{ tile_image | image_url: width: 700 }} 700w, {{ tile_image | image_url: width: 1000 }} 1000w"
-              sizes="(min-width: 1024px) 22vw, (min-width: 600px) 45vw, 90vw"
-              alt="{{ tile_image.alt | default: tile_label | escape }}"
-              loading="lazy"
-              width="{{ tile_image.width }}"
-              height="{{ tile_image.height }}"
-            >
-          {%- elsif block.settings.default_image_filename != blank -%}
-            {%- comment %} Fallback to an image bundled in /assets (placeholder until client photography). {% endcomment -%}
-            <img
-              src="{{ block.settings.default_image_filename | asset_url }}"
-              alt="{{ tile_label | escape }}"
-              loading="lazy"
-              width="1200"
-              height="1200"
-            >
-          {%- else -%}
-            {{ 'collection-1' | placeholder_svg_tag: 'placeholder' }}
-          {%- endif -%}
-          <span class="hoc-tile__label">
-            <span class="hoc-eyebrow">{{ tile_label }}</span>
-          </span>
-        </a>
-      {%- endfor -%}
+    <div class="hoc-roomscroll__viewport" data-room-viewport>
+      <div class="hoc-roomscroll__track" data-room-track>
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign collection = collections[block.settings.collection]
+              assign tile_image = block.settings.image
+              if tile_image == blank and collection != blank
+                assign tile_image = collection.featured_image
+              endif
+              assign tile_label = block.settings.label
+              if tile_label == blank and collection != blank
+                assign tile_label = collection.title
+              endif
+              assign tile_url = block.settings.link
+              if tile_url == blank and collection != blank
+                assign tile_url = collection.url
+              endif
+            -%}
+            <a href="{{ tile_url | default: routes.collections_url }}" class="hoc-roompanel" {{ block.shopify_attributes }}>
+              <span class="hoc-roompanel__media">
+                {%- if tile_image != blank -%}
+                  <img
+                    src="{{ tile_image | image_url: width: 1200 }}"
+                    srcset="{{ tile_image | image_url: width: 700 }} 700w, {{ tile_image | image_url: width: 1200 }} 1200w, {{ tile_image | image_url: width: 1800 }} 1800w"
+                    sizes="(min-width: 1024px) 88vw, 92vw"
+                    alt="{{ tile_image.alt | default: tile_label | escape }}"
+                    loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                    {% if forloop.first %}fetchpriority="high"{% endif %}
+                    width="{{ tile_image.width }}"
+                    height="{{ tile_image.height }}"
+                  >
+                {%- elsif block.settings.default_image_filename != blank -%}
+                  {%- comment %} Fallback to an image bundled in /assets (placeholder until client photography). The first room is the above-the-fold hero / likely LCP element, so load it eagerly. {% endcomment -%}
+                  <img
+                    src="{{ block.settings.default_image_filename | asset_url }}"
+                    alt="{{ tile_label | escape }}"
+                    loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                    {% if forloop.first %}fetchpriority="high"{% endif %}
+                    width="1600"
+                    height="1200"
+                  >
+                {%- else -%}
+                  {{ 'collection-1' | placeholder_svg_tag: 'placeholder' }}
+                {%- endif -%}
+                <span class="hoc-roompanel__label">
+                  <span class="hoc-roompanel__name hoc-eyebrow">{{ tile_label }}</span>
+                </span>
+              </span>
+            </a>
+        {%- endfor -%}
+      </div>
     </div>
+
+    {%- if panel_count > 1 -%}
+      <div class="hoc-roomscroll__progress" data-room-progress aria-hidden="true">
+        <span class="hoc-roomscroll__progress-bar" data-room-progress-bar></span>
+      </div>
+    {%- endif -%}
   </div>
 </section>
 
@@ -72,7 +101,36 @@
   "settings": [
     { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by room" },
     { "type": "text", "id": "link_label", "label": "Link label", "default": "View all" },
-    { "type": "url", "id": "link_url", "label": "Link URL" }
+    { "type": "url", "id": "link_url", "label": "Link URL" },
+    {
+      "type": "checkbox",
+      "id": "pinned",
+      "label": "Pin & scroll horizontally on desktop",
+      "default": true,
+      "info": "When on, the section holds in place and rooms move sideways as the visitor scrolls down (desktop only, respects reduced-motion). When off, rooms scroll horizontally on their own."
+    },
+    {
+      "type": "range",
+      "id": "lead_in",
+      "label": "Pause before scrolling (lead-in)",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "%",
+      "default": 60,
+      "info": "How long the section holds still, showing the heading and first room, before the sideways scroll begins. As a percentage of screen height."
+    },
+    {
+      "type": "range",
+      "id": "lead_out",
+      "label": "Pause after scrolling (lead-out)",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "%",
+      "default": 35,
+      "info": "How long the last room rests in view before the page continues."
+    }
   ],
   "blocks": [
     {

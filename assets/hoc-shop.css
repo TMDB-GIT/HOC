@@ -33,7 +33,9 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  transition: transform 600ms var(--hoc-ease), opacity var(--hoc-speed) var(--hoc-ease);
+  transition:
+    transform 600ms var(--hoc-ease),
+    opacity var(--hoc-speed) var(--hoc-ease);
 }
 /* Primary image scales gently on hover; if a second image exists it crossfades. */
 .hoc-card:hover .hoc-card__img--primary {
@@ -64,7 +66,10 @@
   cursor: pointer;
   opacity: 0;
   transform: translateY(-4px);
-  transition: opacity var(--hoc-speed) var(--hoc-ease), transform var(--hoc-speed) var(--hoc-ease), color var(--hoc-speed) var(--hoc-ease);
+  transition:
+    opacity var(--hoc-speed) var(--hoc-ease),
+    transform var(--hoc-speed) var(--hoc-ease),
+    color var(--hoc-speed) var(--hoc-ease);
 }
 .hoc-card:hover .hoc-card__save,
 .hoc-card__save:focus-visible {
@@ -158,8 +163,12 @@
   animation: hoc-hero-settle 700ms var(--hoc-ease) both;
 }
 @keyframes hoc-hero-settle {
-  from { transform: scale(1.04); }
-  to { transform: scale(1); }
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 /* Scrim for text legibility over photography (bottom for the headline). */
 .hoc-hero-banner__media::after {
@@ -202,57 +211,240 @@
   margin: 0 0 var(--s-4);
 }
 @keyframes hoc-fade-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ==========================================================================
-   Collection / room tiles (editorial, staggered)
+   Shop by room — scroll-through room panels
+   --------------------------------------------------------------------------
+   Three progressive states:
+     1. Mobile (<1024px): simple stacked tiles (default markup below).
+     2. Desktop, no pin (reduced motion / no-JS): native horizontal scroll row.
+     3. Desktop, pinned (.is-pinned, added by hoc-room-scroll.js): the section
+        holds in place and the track is translated by JS as the page scrolls.
    ========================================================================== */
-.hoc-tiles {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--s-4) var(--hoc-gutter);
+.hoc-roomscroll {
+  --hoc-room-h: min(86vh, 1000px);
+  --hoc-panel-w: 100%;
+  /* Small side margin so the imagery runs large but doesn't touch the edges. */
+  --hoc-room-inset: clamp(0.75rem, 2vw, 2rem);
 }
-@media (min-width: 600px) {
-  .hoc-tiles {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (min-width: 1024px) {
-  .hoc-tiles--4 {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  /* Gentle vertical stagger like the design (every 2nd tile drops down). */
-  .hoc-tiles--4 .hoc-tile:nth-child(even) {
-    margin-top: var(--s-6);
-  }
-}
-.hoc-tile {
+
+/* The pinned wrapper — static by default; JS upgrades it to sticky on desktop. */
+.hoc-roomscroll__pin {
   position: relative;
-  display: block;
-  aspect-ratio: var(--hoc-ratio-tile);
-  overflow: hidden;
-  text-decoration: none;
-  background: var(--hoc-paper);
 }
-.hoc-tile img {
+
+/* Centred header: a thin vertical drop-line above the centred heading. */
+.hoc-roomscroll__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--s-3);
+  margin-inline: var(--hoc-gutter);
+  /* Breathing room between the heading and the imagery. */
+  margin-bottom: clamp(var(--s-3), 2vw, var(--s-4));
+}
+.hoc-roomscroll__rule {
+  display: block;
+  width: 1px;
+  height: clamp(2.8rem, 4vw, 5.5rem);
+  background: var(--hoc-ink);
+}
+.hoc-roomscroll__title {
+  margin: 0;
+}
+
+/* Viewport clips the track. Mobile: visible (panels stack); desktop default:
+   native horizontal scroll as a usable fallback. Inset to the page gutter so
+   the imagery aligns with the heading and divider, leaving side space. */
+.hoc-roomscroll__viewport {
+  overflow: visible;
+  margin-inline: var(--hoc-room-inset);
+}
+
+.hoc-roomscroll__track {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+/* The slot holds one room and centres the framed photo within it. */
+.hoc-roompanel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: var(--hoc-panel-w);
+  aspect-ratio: 8 / 5;
+  text-decoration: none;
+}
+/* The photo frame — fixed 8:5 (matches the photography), as large as fits its
+   slot, so the image is always shown whole: no stretch, no crop, consistent
+   across screen sizes. */
+.hoc-roompanel__media {
+  position: relative;
+  height: 100%;
+  aspect-ratio: 8 / 5;
+  max-width: 100%;
+  overflow: hidden;
+  background: var(--hoc-paper);
+  border-radius: var(--hoc-radius);
+}
+.hoc-roompanel__media img,
+.hoc-roompanel__media svg {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+}
+.hoc-roompanel__media img {
   transition: transform 700ms var(--hoc-ease);
 }
-.hoc-tile:hover img {
+.hoc-roompanel:hover .hoc-roompanel__media img {
   transform: scale(1.03);
 }
-.hoc-tile__label {
+/* Dim overlay over the photo — revealed while the user is scrolling. */
+.hoc-roompanel__media::after {
+  content: '';
   position: absolute;
-  inset: auto 0 0 0;
-  padding: var(--s-3);
-  background: linear-gradient(to top, rgba(32, 32, 29, 0.5), transparent);
+  inset: 0;
+  z-index: 1;
+  background: rgba(32, 32, 29, 0.45);
+  opacity: 0;
+  transition: opacity 900ms var(--hoc-ease);
+  pointer-events: none;
 }
-.hoc-tile__label .hoc-eyebrow {
+/* Centred card title. */
+.hoc-roompanel__label {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-1);
+  padding: var(--s-3);
+  text-align: center;
   color: var(--hoc-paper);
+  text-shadow: 0 1px 14px rgba(20, 20, 17, 0.5);
+  transition: opacity 900ms var(--hoc-ease);
+}
+.hoc-roompanel__name {
+  color: var(--hoc-paper);
+  font-size: clamp(2.25rem, 4vw, 4rem);
+}
+
+/* Progress indicator — hidden on mobile, shown while scrolling on desktop. */
+.hoc-roomscroll__progress {
+  display: none;
+}
+.hoc-roomscroll__progress-bar {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--hoc-brass);
+  transform-origin: left center;
+}
+
+/* --- Desktop (>=1024px) ------------------------------------------------- */
+@media (min-width: 1024px) {
+  /* Default desktop: large panels in a native horizontal scroll row. */
+  .hoc-roomscroll__viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .hoc-roomscroll__viewport::-webkit-scrollbar {
+    display: none;
+  }
+  .hoc-roomscroll__track {
+    flex-direction: row;
+    /* Space between rooms, revealed as they slide past one another. */
+    gap: var(--hoc-gutter);
+  }
+  /* One room per full-width slot → only one room is ever in view (no neighbour
+     peek), identical on every screen size. The framed 8:5 photo is centred
+     within the slot. */
+  .hoc-roompanel {
+    width: 100%;
+    height: var(--hoc-room-h);
+    aspect-ratio: auto;
+    scroll-snap-align: center;
+  }
+  /* Progress bar is only ever driven by JS in the pinned path, so only show it
+     there — otherwise (reduced motion / no-JS / pin off) it's a dead 2px track
+     above the native scroll row. */
+  .hoc-roomscroll.is-pinned .hoc-roomscroll__progress {
+    display: block;
+    height: 2px;
+    margin-top: var(--s-3);
+    margin-inline: var(--hoc-room-inset);
+    background: var(--hoc-stone-line);
+    overflow: hidden;
+  }
+
+  /* Pinned: the pin fills the viewport, so the section's own vertical padding
+     would only add an empty band — drop it and let the pin own the spacing. */
+  .hoc-roomscroll.is-pinned {
+    padding-block: 0;
+  }
+
+  /* Pinned: heading sits at the top (never clipped), the room area fills the
+     remaining height, progress at the bottom. JS drives the track transform. */
+  .hoc-roomscroll.is-pinned .hoc-roomscroll__pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    padding-block: var(--s-2);
+  }
+  .hoc-roomscroll.is-pinned .hoc-roomscroll__viewport {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    scroll-snap-type: none;
+  }
+  .hoc-roomscroll.is-pinned .hoc-roomscroll__track {
+    height: 100%;
+    transition: none;
+    will-change: transform;
+  }
+  .hoc-roomscroll.is-pinned .hoc-roompanel {
+    height: 100%;
+    scroll-snap-align: none;
+  }
+  /* Title + dim hidden by default; revealed while the user scrolls through the
+     rooms, hovers a card, OR focuses one via the keyboard (persistent, so a
+     tabbed-to room stays labelled). All just raise opacity, so they layer
+     cleanly and never fight the scroll-driven slide. */
+  .hoc-roomscroll.is-pinned .hoc-roompanel__label {
+    opacity: 0;
+  }
+  .hoc-roomscroll.is-pinned.is-scrolling .hoc-roompanel__label,
+  .hoc-roomscroll.is-pinned.is-scrolling .hoc-roompanel__media::after,
+  .hoc-roomscroll.is-pinned .hoc-roompanel:hover .hoc-roompanel__label,
+  .hoc-roomscroll.is-pinned .hoc-roompanel:hover .hoc-roompanel__media::after,
+  .hoc-roomscroll.is-pinned .hoc-roompanel:focus-within .hoc-roompanel__label,
+  .hoc-roomscroll.is-pinned .hoc-roompanel:focus-within .hoc-roompanel__media::after {
+    opacity: 1;
+  }
 }
 
 /* ==========================================================================
@@ -653,7 +845,9 @@
   font-size: var(--t-small);
   color: var(--hoc-ink);
   cursor: pointer;
-  transition: border-color var(--hoc-speed) var(--hoc-ease), background-color var(--hoc-speed) var(--hoc-ease);
+  transition:
+    border-color var(--hoc-speed) var(--hoc-ease),
+    background-color var(--hoc-speed) var(--hoc-ease);
 }
 .hoc-variant__chip:hover {
   border-color: var(--hoc-brass);
