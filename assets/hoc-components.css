@@ -34,7 +34,8 @@
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color var(--hoc-speed) var(--hoc-ease),
+  transition:
+    background-color var(--hoc-speed) var(--hoc-ease),
     color var(--hoc-speed) var(--hoc-ease),
     border-color var(--hoc-speed) var(--hoc-ease);
 }
@@ -168,7 +169,8 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--hoc-stone-line);
-  transition: border-color var(--hoc-speed) var(--hoc-ease),
+  transition:
+    border-color var(--hoc-speed) var(--hoc-ease),
     box-shadow var(--hoc-speed) var(--hoc-ease);
 }
 /* Border deepens + barely-there shadow once the page is scrolled. */
@@ -249,7 +251,8 @@
   text-decoration: none;
   padding-block: 0.4rem;
   border-bottom: 1px solid transparent;
-  transition: color var(--hoc-speed) var(--hoc-ease),
+  transition:
+    color var(--hoc-speed) var(--hoc-ease),
     border-color var(--hoc-speed) var(--hoc-ease);
 }
 .hoc-nav__link:hover,
@@ -257,6 +260,113 @@
 .hoc-nav__link.is-active {
   color: var(--hoc-ink);
   border-bottom-color: var(--hoc-brass);
+}
+
+/* --------------------------------------------------------------------------
+   Nav dropdown — any menu item with sub-items (e.g. Catalog → its rooms).
+   Opens on hover and on keyboard focus; a thin paper card on a brass hairline.
+   -------------------------------------------------------------------------- */
+.hoc-nav__item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.hoc-nav__link--parent {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+}
+.hoc-nav__chev {
+  width: 12px;
+  height: 12px;
+  transition: transform var(--hoc-speed) var(--hoc-ease);
+}
+.hoc-nav__item:hover .hoc-nav__chev,
+.hoc-nav__item:focus-within .hoc-nav__chev,
+.hoc-nav__item.is-open .hoc-nav__chev {
+  transform: rotate(180deg);
+}
+
+.hoc-nav__panel {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  min-width: 200px;
+  margin-top: var(--s-2);
+  padding: var(--s-2) 0;
+  background: var(--hoc-paper);
+  border: 1px solid var(--hoc-stone-line);
+  border-top: 2px solid var(--hoc-brass);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 28px rgba(32, 32, 29, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--hoc-speed) var(--hoc-ease),
+    transform var(--hoc-speed) var(--hoc-ease),
+    visibility var(--hoc-speed);
+  z-index: 60;
+}
+/* Invisible bridge so the cursor can travel from the link to the panel without
+   crossing a gap that would close it. */
+.hoc-nav__panel::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(-1 * var(--s-2) - 2px);
+  height: calc(var(--s-2) + 2px);
+}
+.hoc-nav__item:hover .hoc-nav__panel,
+.hoc-nav__item:focus-within .hoc-nav__panel,
+.hoc-nav__item.is-open .hoc-nav__panel {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.hoc-nav__sublist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hoc-nav__sublink {
+  display: block;
+  padding: 0.55rem var(--s-3);
+  font-family: var(--hoc-font-body);
+  font-size: var(--t-small);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--hoc-sage-soft);
+  text-decoration: none;
+  transition:
+    color var(--hoc-speed) var(--hoc-ease),
+    background-color var(--hoc-speed) var(--hoc-ease);
+}
+.hoc-nav__sublink:hover,
+.hoc-nav__sublink:focus-visible,
+.hoc-nav__sublink.is-active {
+  color: var(--hoc-ink);
+  background-color: var(--hoc-canvas);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hoc-nav__panel {
+    transform: translateX(-50%);
+    transition:
+      opacity var(--hoc-speed) var(--hoc-ease),
+      visibility var(--hoc-speed);
+  }
+  .hoc-nav__item:hover .hoc-nav__panel,
+  .hoc-nav__item:focus-within .hoc-nav__panel,
+  .hoc-nav__item.is-open .hoc-nav__panel {
+    transform: translateX(-50%);
+  }
+  .hoc-nav__chev {
+    transition: none;
+  }
 }
 
 /* Trailing icon buttons (search / account / ideabook / bag). */
@@ -313,7 +423,9 @@
   -webkit-backdrop-filter: none;
   border-bottom-color: transparent;
   box-shadow: none;
-  transition: background-color 0.3s var(--hoc-ease), border-color 0.3s var(--hoc-ease);
+  transition:
+    background-color 0.3s var(--hoc-ease),
+    border-color 0.3s var(--hoc-ease);
 }
 .hoc-header--overlay .hoc-logo,
 .hoc-header--overlay .hoc-iconbtn,
@@ -323,7 +435,9 @@
 }
 .hoc-header--overlay .hoc-nav__link {
   color: rgba(252, 249, 242, 0.82);
-  transition: color 0.3s var(--hoc-ease), border-color 0.3s var(--hoc-ease);
+  transition:
+    color 0.3s var(--hoc-ease),
+    border-color 0.3s var(--hoc-ease);
 }
 .hoc-header--overlay .hoc-nav__link:hover,
 .hoc-header--overlay .hoc-nav__link.is-active {
@@ -438,6 +552,58 @@
   letter-spacing: 0.06em;
   color: var(--hoc-ink);
   text-decoration: none;
+}
+
+/* Drawer accordion — menu items with sub-items (e.g. Catalog → its rooms). */
+.hoc-drawer__group {
+  border-bottom: 1px solid var(--hoc-stone-line);
+}
+.hoc-drawer__group > .hoc-drawer__summary {
+  border-bottom: 0; /* the <details> carries the divider */
+}
+.hoc-drawer__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  cursor: pointer;
+  list-style: none; /* hide the native disclosure triangle */
+}
+.hoc-drawer__summary::-webkit-details-marker {
+  display: none;
+}
+.hoc-drawer__chev {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  transition: transform var(--hoc-speed) var(--hoc-ease);
+}
+.hoc-drawer__group[open] > .hoc-drawer__summary .hoc-drawer__chev {
+  transform: rotate(180deg);
+}
+.hoc-drawer__sub {
+  padding: 0 0 var(--s-2) var(--s-2);
+  display: flex;
+  flex-direction: column;
+}
+.hoc-drawer__sublink {
+  padding: 0.6rem 0;
+  font-family: var(--hoc-font-body);
+  font-size: var(--t-body);
+  letter-spacing: 0.04em;
+  color: var(--hoc-sage-soft);
+  text-decoration: none;
+}
+.hoc-drawer__sublink:hover {
+  color: var(--hoc-ink);
+}
+.hoc-drawer__sublink--all {
+  color: var(--hoc-ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hoc-drawer__chev {
+    transition: none;
+  }
 }
 .hoc-drawer__utility {
   margin-top: auto;

@@ -39,6 +39,10 @@
     // (lead-out) the sideways scroll — expressed as a fraction of viewport height.
     this.leadInRatio = ratio(section.getAttribute('data-room-leadin'), 60);
     this.leadOutRatio = ratio(section.getAttribute('data-room-leadout'), 35);
+    // When on, the page glides to centre the nearest room once scrolling stops,
+    // so the visitor never has to line a room up by hand.
+    this.snap = section.getAttribute('data-room-snap') === 'true';
+    this.panels = this.track ? this.track.children.length : 0;
     this.distance = 0; // horizontal scroll distance (one room per slot width)
     this.leadIn = 0;
     this.leadOut = 0;
@@ -85,6 +89,25 @@
     if (this.bar) this.bar.style.width = (progress * 100).toFixed(2) + '%';
   };
 
+  /* Once scrolling settles, glide the page so the closest room sits centred.
+     The track is transform-driven (not natively scrolled), so CSS scroll-snap
+     can't reach it — we map the nearest room back to a page-scroll position and
+     smooth-scroll there. Only fires within the sideways-travel zone, leaving the
+     lead-in and lead-out holds untouched. */
+  RoomScroll.prototype.snapToNearest = function () {
+    if (!this.active || !this.snap || this.distance <= 0 || this.panels < 2) return;
+    var start = this.sectionTop() + this.leadIn;
+    var end = start + this.distance;
+    var y = window.pageYOffset;
+    if (y < start || y > end) return;
+    var step = this.distance / (this.panels - 1);
+    var index = Math.round((y - start) / step);
+    var target = start + index * step;
+    // Already centred — don't fire another scroll (avoids a snap→scroll→snap loop).
+    if (Math.abs(target - y) < 2) return;
+    window.scrollTo({ top: target, behavior: 'smooth' });
+  };
+
   RoomScroll.prototype.onScroll = function () {
     if (!this.active) return;
     // Skip all work once the section has scrolled fully out of view — it stays
@@ -97,7 +120,8 @@
     window.clearTimeout(this.scrollEndTimer);
     this.scrollEndTimer = window.setTimeout(function () {
       self.section.classList.remove('is-scrolling');
-    }, 280);
+      self.snapToNearest();
+    }, 120);
     if (this.ticking) return;
     this.ticking = true;
     window.requestAnimationFrame(function () {
@@ -106,18 +130,46 @@
     });
   };
 
+  /* Map a room panel to the page-scroll position that brings it on screen, and
+     glide there. The track is transform-driven, so we measure the panel relative
+     to the track's own left edge (both share the sticky pin as offsetParent,
+     which carries the viewport inset) to match the track's translate model. */
+  RoomScroll.prototype.scrollToPanel = function (panel, behavior) {
+    if (!this.active || this.distance <= 0 || !panel) return;
+    var offset = panel.offsetLeft - this.track.offsetLeft;
+    var target = Math.min(this.distance, Math.max(0, offset));
+    window.scrollTo({ top: this.sectionTop() + this.leadIn + target, behavior: behavior || 'auto' });
+  };
+
   /* Keep keyboard navigation usable while pinned: when a panel link is focused,
      scroll the page so that panel is the one on screen. */
   RoomScroll.prototype.onFocus = function (event) {
     if (!this.active || this.distance <= 0) return;
     var panel = event.target.closest('.hoc-roompanel');
     if (!panel) return;
-    // Measure the panel relative to the track's own left edge (both share the
-    // sticky pin as offsetParent, which carries the viewport inset) so this
-    // matches the track's translate model.
-    var offset = panel.offsetLeft - this.track.offsetLeft;
-    var target = Math.min(this.distance, Math.max(0, offset));
-    window.scrollTo({ top: this.sectionTop() + this.leadIn + target, behavior: 'auto' });
+    this.scrollToPanel(panel, 'auto');
+  };
+
+  /* Deep-link support: a nav item like "Catalog → Bathroom" points at
+     /#room-bathroom. Native anchor jumps land on the panel's static position,
+     which is wrong while the track is transformed — so we intercept the hash,
+     find the matching panel in this section and glide the page to it instead.
+     Returns true when this section owned the hash. */
+  RoomScroll.prototype.goToHash = function (behavior) {
+    if (!this.active || this.distance <= 0) return false;
+    var hash = window.location.hash;
+    if (!hash || hash.length < 2) return false;
+    var id = hash.slice(1);
+    var selector = '#' + (window.CSS && CSS.escape ? CSS.escape(id) : id);
+    var panel;
+    try {
+      panel = this.track.querySelector(selector);
+    } catch (e) {
+      return false;
+    }
+    if (!panel) return false;
+    this.scrollToPanel(panel, behavior);
+    return true;
   };
 
   RoomScroll.prototype.enable = function () {
@@ -182,9 +234,24 @@
       });
     }, 150);
   });
+  // Land on the right room when the page is opened with a #room-… hash.
+  // Measure first so the panel offsets and section height are settled, then,
+  // if a deep link is present, override the browser's native anchor jump.
+  function handleHash(behavior) {
+    for (var i = 0; i < instances.length; i++) {
+      if (instances[i].goToHash(behavior)) return; // first match wins
+    }
+  }
+
   window.addEventListener('load', function () {
     forEach(function (rs) {
       rs.measure();
     });
+    handleHash('auto');
+  });
+
+  // Same-page deep links (clicking a room while already on the homepage).
+  window.addEventListener('hashchange', function () {
+    handleHash('smooth');
   });
 })();

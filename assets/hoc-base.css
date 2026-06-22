@@ -51,9 +51,9 @@
   --t-mono: 1.2rem;                               /* 12px — eyebrows / specs   */
 
   /* ---- Type families --------------------------------------------------- */
-  --hoc-font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
   --hoc-font-body: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --hoc-font-mono: 'IBM Plex Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+  --hoc-font-display: var(--hoc-font-body); /* unified: all text uses Hanken Grotesk */
+  --hoc-font-mono: var(--hoc-font-body);    /* unified: all text uses Hanken Grotesk */
 
   /* ---- Spacing scale (8px base, expressed for 10px rem) --------------- */
   --s-1: 0.8rem;   /* 8px  */

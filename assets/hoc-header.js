@@ -42,6 +42,68 @@
     window.addEventListener('resize', onScroll, { passive: true });
   }
 
+  /* ---- Desktop nav dropdowns (e.g. Catalog → its rooms) ---------------
+     CSS drives the reveal on hover and on keyboard focus (:focus-within); this
+     only keeps aria-expanded honest, lets touch/no-hover devices tap the parent
+     to open instead of navigating, and closes on Esc or an outside click. */
+  var dropdowns = document.querySelectorAll('[data-hoc-dropdown]');
+  var noHover = window.matchMedia('(hover: none)');
+
+  dropdowns.forEach(function (item) {
+    var toggle = item.querySelector('[data-hoc-dropdown-toggle]');
+    if (!toggle) return;
+
+    var setExpanded = function (open) {
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+    var close = function () {
+      item.classList.remove('is-open');
+      setExpanded(false);
+    };
+
+    item.addEventListener('mouseenter', function () {
+      setExpanded(true);
+    });
+    item.addEventListener('mouseleave', function () {
+      item.classList.remove('is-open');
+      if (!item.contains(document.activeElement)) setExpanded(false);
+    });
+    item.addEventListener('focusin', function () {
+      setExpanded(true);
+    });
+    item.addEventListener('focusout', function (e) {
+      if (!item.contains(e.relatedTarget)) close();
+    });
+
+    // Touch / no-hover: first tap opens the panel rather than following the link.
+    toggle.addEventListener('click', function (e) {
+      if (noHover.matches && !item.classList.contains('is-open')) {
+        e.preventDefault();
+        item.classList.add('is-open');
+        setExpanded(true);
+      }
+    });
+
+    item.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        close();
+        toggle.focus();
+      }
+    });
+  });
+
+  if (dropdowns.length) {
+    document.addEventListener('click', function (e) {
+      dropdowns.forEach(function (item) {
+        if (item.classList.contains('is-open') && !item.contains(e.target)) {
+          item.classList.remove('is-open');
+          var t = item.querySelector('[data-hoc-dropdown-toggle]');
+          if (t) t.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+  }
+
   /* ---- Mobile drawer --------------------------------------------------- */
   var drawer = document.querySelector('[data-hoc-drawer]');
   if (!drawer) return;
@@ -52,9 +114,7 @@
   var lastFocused = null;
 
   function focusable() {
-    return panel.querySelectorAll(
-      'a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])'
-    );
+    return panel.querySelectorAll('a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])');
   }
 
   function openDrawer() {
