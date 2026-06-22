@@ -60,16 +60,18 @@
                     srcset="{{ tile_image | image_url: width: 700 }} 700w, {{ tile_image | image_url: width: 1200 }} 1200w, {{ tile_image | image_url: width: 1800 }} 1800w"
                     sizes="(min-width: 1024px) 88vw, 92vw"
                     alt="{{ tile_image.alt | default: tile_label | escape }}"
-                    loading="lazy"
+                    loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                    {% if forloop.first %}fetchpriority="high"{% endif %}
                     width="{{ tile_image.width }}"
                     height="{{ tile_image.height }}"
                   >
                 {%- elsif block.settings.default_image_filename != blank -%}
-                  {%- comment %} Fallback to an image bundled in /assets (placeholder until client photography). {% endcomment -%}
+                  {%- comment %} Fallback to an image bundled in /assets (placeholder until client photography). The first room is the above-the-fold hero / likely LCP element, so load it eagerly. {% endcomment -%}
                   <img
                     src="{{ block.settings.default_image_filename | asset_url }}"
                     alt="{{ tile_label | escape }}"
-                    loading="lazy"
+                    loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                    {% if forloop.first %}fetchpriority="high"{% endif %}
                     width="1600"
                     height="1200"
                   >

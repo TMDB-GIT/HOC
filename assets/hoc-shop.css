@@ -386,7 +386,10 @@
     aspect-ratio: auto;
     scroll-snap-align: center;
   }
-  .hoc-roomscroll__progress {
+  /* Progress bar is only ever driven by JS in the pinned path, so only show it
+     there — otherwise (reduced motion / no-JS / pin off) it's a dead 2px track
+     above the native scroll row. */
+  .hoc-roomscroll.is-pinned .hoc-roomscroll__progress {
     display: block;
     height: 2px;
     margin-top: var(--s-3);
@@ -428,15 +431,18 @@
     scroll-snap-align: none;
   }
   /* Title + dim hidden by default; revealed while the user scrolls through the
-     rooms OR hovers a card. Both just raise opacity, so they layer cleanly and
-     never fight the scroll-driven slide. */
+     rooms, hovers a card, OR focuses one via the keyboard (persistent, so a
+     tabbed-to room stays labelled). All just raise opacity, so they layer
+     cleanly and never fight the scroll-driven slide. */
   .hoc-roomscroll.is-pinned .hoc-roompanel__label {
     opacity: 0;
   }
   .hoc-roomscroll.is-pinned.is-scrolling .hoc-roompanel__label,
   .hoc-roomscroll.is-pinned.is-scrolling .hoc-roompanel__media::after,
   .hoc-roomscroll.is-pinned .hoc-roompanel:hover .hoc-roompanel__label,
-  .hoc-roomscroll.is-pinned .hoc-roompanel:hover .hoc-roompanel__media::after {
+  .hoc-roomscroll.is-pinned .hoc-roompanel:hover .hoc-roompanel__media::after,
+  .hoc-roomscroll.is-pinned .hoc-roompanel:focus-within .hoc-roompanel__label,
+  .hoc-roomscroll.is-pinned .hoc-roompanel:focus-within .hoc-roompanel__media::after {
     opacity: 1;
   }
 }

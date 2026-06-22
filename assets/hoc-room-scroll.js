@@ -87,6 +87,10 @@
 
   RoomScroll.prototype.onScroll = function () {
     if (!this.active) return;
+    // Skip all work once the section has scrolled fully out of view — it stays
+    // active for the whole desktop session, so don't keep rendering for nothing.
+    var rect = this.section.getBoundingClientRect();
+    if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
     // Reveal the dim + titles while scrolling; hide shortly after it stops.
     var self = this;
     this.section.classList.add('is-scrolling');
@@ -108,7 +112,11 @@
     if (!this.active || this.distance <= 0) return;
     var panel = event.target.closest('.hoc-roompanel');
     if (!panel) return;
-    var target = Math.min(this.distance, Math.max(0, panel.offsetLeft));
+    // Measure the panel relative to the track's own left edge (both share the
+    // sticky pin as offsetParent, which carries the viewport inset) so this
+    // matches the track's translate model.
+    var offset = panel.offsetLeft - this.track.offsetLeft;
+    var target = Math.min(this.distance, Math.max(0, offset));
     window.scrollTo({ top: this.sectionTop() + this.leadIn + target, behavior: 'auto' });
   };
 
@@ -166,8 +174,11 @@
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(function () {
       forEach(function (rs) {
+        // If a breakpoint was crossed, evaluate()→enable() already re-measures;
+        // only an already-active instance needs the extra measure() here.
+        var wasActive = rs.active;
         rs.evaluate();
-        rs.measure();
+        if (wasActive && rs.active) rs.measure();
       });
     }, 150);
   });

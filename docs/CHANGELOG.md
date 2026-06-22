@@ -58,6 +58,22 @@ lint errors are pre-existing in Dawn's own files); JS passes `node --check`.
 
 ## Evolution (newest first)
 
+### 2026-06-22 — PR #5 review fixes
+Addressed 6 findings from automated review:
+- **Perf (LCP):** first room now loads `eager` + `fetchpriority="high"` (it's the
+  above-the-fold hero / likely LCP); later rooms stay `lazy`.
+- **A11y:** added a `:focus-within` reveal so a keyboard-focused room stays
+  labelled (the brief `is-scrolling` flash didn't persist, and the first room
+  fired no scroll event at all).
+- **Correctness:** keyboard-nav scroll target measured the panel relative to the
+  track's left edge (`offsetLeft - track.offsetLeft`) so it no longer overshoots
+  by the viewport inset.
+- **Cosmetic:** progress bar `display: block` scoped to `.is-pinned` so it isn't
+  a dead element under reduced-motion / no-JS / pin-off.
+- **Efficiency:** `onScroll` early-outs once the section is off-screen.
+- **Cleanup:** resize handler only re-`measure()`s an already-active instance
+  (avoids a double-measure when a breakpoint is crossed).
+
 ### 2026-06-22
 - **Name-only label.** Removed the index counter ("01 / 04") — the card shows
   only the room name. Dropped the now-unused `tile_index`/`tile_total` Liquid
