@@ -88,22 +88,29 @@ The link is always:
 /#room-<the room’s handle>
 ```
 
-The **handle** is just the room’s name in lowercase, with spaces turned into
-hyphens and the `&` dropped. The theme builds it from each room tile on the
-homepage. Examples:
+The **handle** comes from each room tile on the homepage “Shop by room” section.
+There are two cases — check which one your tile uses, because they can differ:
 
-| Room on the homepage | Handle              | Link to use                 |
-| -------------------- | ------------------- | --------------------------- |
-| Bathroom             | `bathroom`          | `/#room-bathroom`           |
-| Kitchen              | `kitchen`           | `/#room-kitchen`            |
-| Tiles & Surfaces     | `tiles-surfaces`    | `/#room-tiles-surfaces`     |
+**Case A — the tile is _not_ linked to a collection** (the current homepage
+setup: the tiles just have a name and a photo). The handle is the **name in
+lowercase**, with spaces turned into hyphens and the `&` dropped:
 
-> **If a room tile is linked to a Shopify collection**, the handle is the
-> *collection’s* handle instead of the name. You can see a collection’s handle in
-> **Products → Collections →** (open the collection) **→** scroll to **Search
-> engine listing → Edit →** the “URL handle” field. Use that value after
-> `/#room-`. When in doubt, match it to the room exactly as it’s set up on the
-> homepage “Shop by room” section.
+| Room name        | Handle           | Link to use             |
+| ---------------- | ---------------- | ----------------------- |
+| Bathroom         | `bathroom`       | `/#room-bathroom`       |
+| Kitchen          | `kitchen`        | `/#room-kitchen`        |
+| Tiles & Surfaces | `tiles-surfaces` | `/#room-tiles-surfaces` |
+
+**Case B — the tile _is_ linked to a Shopify collection.** Then the handle is the
+**collection’s URL handle**, *not* the name shown on the tile. These often match,
+but not always: a collection shown as “Bath & Shower” might have the URL handle
+`bathroom`, so the link is `/#room-bathroom` (not `/#room-bath-shower`). Find the
+exact value in **Products → Collections →** open the collection **→ Search engine
+listing → Edit → URL handle**. Use that after `/#room-`.
+
+> **Quick way to be sure either way:** on the live homepage, right-click the room
+> photo → *Inspect*, and read the `id` on the link — it’s literally `room-…`. The
+> bit after `room-` is exactly what goes after `/#room-` in your menu link.
 
 ---
 

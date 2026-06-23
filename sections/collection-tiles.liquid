@@ -63,6 +63,14 @@
               else
                 assign room_anchor = tile_label | handleize
               endif
+              comment
+                A tile with no collection and a blank label would handleize to '',
+                giving a useless, non-unique id="room-". Fall back to the block's
+                position so every panel keeps a unique, resolvable anchor.
+              endcomment
+              if room_anchor == blank
+                assign room_anchor = forloop.index
+              endif
             -%}
             <a
               id="room-{{ room_anchor }}"

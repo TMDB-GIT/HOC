@@ -111,7 +111,19 @@ A heritage-townhouse palette: warm stone and plaster, a deep sage anchor, and **
 
 ### 4.2 Typography
 
-Three roles. Avoid the obvious Didone luxury serif (Playfair et al.) — it's the default move. We pair a quiet, low-contrast serif with a clean grotesque body and a mono utility face that powers the specimen system.
+> **DECISION (locked, client direction): one typeface site-wide — Hanken Grotesk.**
+> The client wants a single, consistent font across the whole site rather than a
+> serif/grotesque/mono mix. Implemented as: `--hoc-font-body: 'Hanken Grotesk'`,
+> with `--hoc-font-display` and `--hoc-font-mono` both resolving to it
+> (`assets/hoc-base.css`); only Hanken Grotesk (weights 400/500) is loaded in
+> `layout/theme.liquid`. Differentiation is by **style, not family** — size +
+> tight leading for headlines, uppercase + tracking for eyebrows/specs — so the
+> specimen system still reads as a distinct register. The three role tokens are
+> kept (not collapsed) so a future multi-family revival is a token-only change.
+> The original three-role proposal below is **retained for reference / future
+> option, but superseded** by this decision.
+
+~~Three roles.~~ *(superseded — see decision above)* Avoid the obvious Didone luxury serif (Playfair et al.) — it's the default move. We pair a quiet, low-contrast serif with a clean grotesque body and a mono utility face that powers the specimen system.
 
 | Role | Ideal (licensed) | Accessible fallback (Google/free) | Used for |
 |------|------------------|-----------------------------------|----------|
@@ -119,7 +131,7 @@ Three roles. Avoid the obvious Didone luxury serif (Playfair et al.) — it's th
 | **Body grotesque** | Söhne / Suisse Int'l | **Hanken Grotesk** or **Schibsted Grotesk** | Body, nav, UI, buttons |
 | **Mono utility** | Söhne Mono | **Spline Sans Mono** or **IBM Plex Mono** | Eyebrows, specs, prices, specimen labels, SKUs |
 
-> Shopify note: load fonts via `font_picker` settings where possible for licensed Shopify fonts, otherwise self-host the chosen webfonts in `/assets` and preload the two most critical weights. Keep to **2 weights per family** to protect performance.
+> Shopify note: load fonts via `font_picker` settings where possible for licensed Shopify fonts, otherwise self-host the chosen webfonts in `/assets` and preload the two most critical weights. Keep to **2 weights per family** to protect performance. *(Current build: a single Google-hosted family, Hanken Grotesk, per the decision above.)*
 
 **Type scale** (1.25 major-third-ish, fluid with `clamp`):
 
@@ -416,7 +428,7 @@ After steps 3, 5, and 8, stop and review against this document — especially th
 ## 12. Open decisions (need a human answer)
 
 1. **Logo artwork & colourways** — supply SVG + colour values. The palette (`--hoc-ink`, `--hoc-sage`) should be tuned to match so the logo never looks pasted on.
-2. **Fonts** — confirm budget for licensed faces (Canela/Söhne tier) vs the free fallbacks (Spectral + Hanken Grotesk + Spline Sans Mono). Either works; the licensed tier lifts the premium feel a notch.
+2. **Fonts** — ~~confirm budget for licensed faces (Canela/Söhne tier) vs the free fallbacks~~ **RESOLVED:** client wants **one consistent typeface site-wide** — **Hanken Grotesk** (free, Google Fonts). No serif/mono pairing for now. See §4.2 decision banner. A licensed multi-family revival remains possible later (token-only change).
 3. **Exact catalogue taxonomy** — final list of rooms and product types, to lock the mega-menu and metafield `room`/`type` values. (Current nav in §6 is a sensible placeholder.)
 4. **"Ideabook" vs "Wishlist"** — confirm the term (recommend Ideabook) and whether sharing is needed at launch.
 5. **Trade at launch?** — is trade membership/pricing a v1 feature or phase 2?

@@ -48,6 +48,9 @@
     this.leadOut = 0;
     this.active = false;
     this.ticking = false;
+    // True while a programmatic snap scroll is animating, so the settle timer
+    // doesn't keep re-snapping against the browser's own smooth-scroll events.
+    this.snapping = false;
     this.onScroll = this.onScroll.bind(this);
     this.onFocus = this.onFocus.bind(this);
   }
@@ -96,6 +99,9 @@
      lead-in and lead-out holds untouched. */
   RoomScroll.prototype.snapToNearest = function () {
     if (!this.active || !this.snap || this.distance <= 0 || this.panels < 2) return;
+    // A snap is already gliding — its own scroll events keep firing this; let it
+    // finish rather than retargeting mid-flight (the snap-back tug-of-war).
+    if (this.snapping) return;
     var start = this.sectionTop() + this.leadIn;
     var end = start + this.distance;
     var y = window.pageYOffset;
@@ -103,8 +109,18 @@
     var step = this.distance / (this.panels - 1);
     var index = Math.round((y - start) / step);
     var target = start + index * step;
-    // Already centred — don't fire another scroll (avoids a snap→scroll→snap loop).
-    if (Math.abs(target - y) < 2) return;
+    // Close enough to centred — don't fire another scroll. The threshold is a
+    // fraction of a step (with a small floor) so a smooth scroll that over/undershoots
+    // by a few px doesn't re-trigger a fresh snap.
+    var settled = Math.max(4, step * 0.08);
+    if (Math.abs(target - y) < settled) return;
+    var self = this;
+    this.snapping = true;
+    window.clearTimeout(this.snapTimer);
+    // Release once the smooth scroll has had time to land (it has no completion event).
+    this.snapTimer = window.setTimeout(function () {
+      self.snapping = false;
+    }, 600);
     window.scrollTo({ top: target, behavior: 'smooth' });
   };
 
@@ -187,6 +203,8 @@
     this.section.classList.remove('is-pinned');
     this.section.classList.remove('is-scrolling');
     window.clearTimeout(this.scrollEndTimer);
+    window.clearTimeout(this.snapTimer);
+    this.snapping = false;
     window.removeEventListener('scroll', this.onScroll);
     this.viewport.removeEventListener('focusin', this.onFocus);
     this.section.style.height = '';

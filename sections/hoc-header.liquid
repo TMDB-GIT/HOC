@@ -68,14 +68,14 @@
               <a
                 href="{{ link.url }}"
                 class="hoc-nav__link hoc-nav__link--parent{% if link.active or link.child_active %} is-active{% endif %}"
-                aria-haspopup="true"
                 aria-expanded="false"
+                aria-controls="hoc-nav-panel-{{ forloop.index }}"
                 data-hoc-dropdown-toggle
               >
                 {{ link.title }}
                 {% render 'hoc-icon', name: 'chevron', class: 'hoc-nav__chev' %}
               </a>
-              <div class="hoc-nav__panel" data-hoc-dropdown-panel>
+              <div class="hoc-nav__panel" id="hoc-nav-panel-{{ forloop.index }}" data-hoc-dropdown-panel>
                 <ul class="hoc-nav__sublist" role="list">
                   {%- for child in link.links -%}
                     <li>
@@ -160,7 +160,7 @@
               </summary>
               <div class="hoc-drawer__sub">
                 <a href="{{ link.url }}" class="hoc-drawer__sublink hoc-drawer__sublink--all">
-                  All {{ link.title | downcase }}
+                  All {{ link.title }}
                 </a>
                 {%- for child in link.links -%}
                   <a href="{{ child.url }}" class="hoc-drawer__sublink">{{ child.title }}</a>
