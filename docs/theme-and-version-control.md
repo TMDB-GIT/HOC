@@ -4,8 +4,15 @@ A plain-English map of how this project fits together, written to clear up two
 things: **(1)** are we using Dawn or not, and where does "Feather" come in, and
 **(2)** how version control works with Shopify and the GitHub repo.
 
-> This doc is also meant to bring a second Claude Code chat up to speed — see the
-> **"Exact status"** box at the bottom for the precise, current facts.
+> ⚠️ **Historical / background context.** This doc was written *before* House of
+> Clarence went live, so several status facts below are now out of date (it says
+> the HoC build is uncommitted and Feather is live). For the **current** state and
+> the day-to-day workflow, read **[managing-and-onboarding.md](./managing-and-onboarding.md)**.
+>
+> **What changed since:** the HoC build is committed and merged to `main`; it was
+> deployed via the Shopify CLI and **published — House of Clarence (theme id
+> `203201216843`) is now the live storefront**, and **Feather is now an unpublished
+> rollback**. The conceptual sections (1–6) below are still accurate and worth reading.
 
 ---
 
