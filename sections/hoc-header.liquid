@@ -58,16 +58,46 @@
       <a href="{{ routes.root_url }}" class="hoc-logo">{{ shop.name }}</a>
     {%- endif -%}
 
-    {%- comment %} Desktop navigation {% endcomment -%}
+    {%- comment %} Desktop navigation. Any menu item with sub-items (e.g. Catalog
+      → its rooms) renders a hover/focus dropdown; flat items stay plain links. {% endcomment -%}
     {%- if menu != blank -%}
       <nav class="hoc-nav" aria-label="Primary">
         {%- for link in menu.links -%}
-          <a
-            href="{{ link.url }}"
-            class="hoc-nav__link{% if link.active or link.child_active %} is-active{% endif %}"
-          >
-            {{ link.title }}
-          </a>
+          {%- if link.links != blank -%}
+            <div class="hoc-nav__item" data-hoc-dropdown>
+              <a
+                href="{{ link.url }}"
+                class="hoc-nav__link hoc-nav__link--parent{% if link.active or link.child_active %} is-active{% endif %}"
+                aria-expanded="false"
+                aria-controls="hoc-nav-panel-{{ forloop.index }}"
+                data-hoc-dropdown-toggle
+              >
+                {{ link.title }}
+                {% render 'hoc-icon', name: 'chevron', class: 'hoc-nav__chev' %}
+              </a>
+              <div class="hoc-nav__panel" id="hoc-nav-panel-{{ forloop.index }}" data-hoc-dropdown-panel>
+                <ul class="hoc-nav__sublist" role="list">
+                  {%- for child in link.links -%}
+                    <li>
+                      <a
+                        href="{{ child.url }}"
+                        class="hoc-nav__sublink{% if child.active %} is-active{% endif %}"
+                      >
+                        {{ child.title }}
+                      </a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            </div>
+          {%- else -%}
+            <a
+              href="{{ link.url }}"
+              class="hoc-nav__link{% if link.active or link.child_active %} is-active{% endif %}"
+            >
+              {{ link.title }}
+            </a>
+          {%- endif -%}
         {%- endfor -%}
       </nav>
     {%- endif -%}
@@ -122,7 +152,24 @@
     {%- if menu != blank -%}
       <nav aria-label="Mobile">
         {%- for link in menu.links -%}
-          <a href="{{ link.url }}" class="hoc-drawer__link">{{ link.title }}</a>
+          {%- if link.links != blank -%}
+            <details class="hoc-drawer__group">
+              <summary class="hoc-drawer__link hoc-drawer__summary">
+                {{ link.title }}
+                {% render 'hoc-icon', name: 'chevron', class: 'hoc-drawer__chev' %}
+              </summary>
+              <div class="hoc-drawer__sub">
+                <a href="{{ link.url }}" class="hoc-drawer__sublink hoc-drawer__sublink--all">
+                  All {{ link.title }}
+                </a>
+                {%- for child in link.links -%}
+                  <a href="{{ child.url }}" class="hoc-drawer__sublink">{{ child.title }}</a>
+                {%- endfor -%}
+              </div>
+            </details>
+          {%- else -%}
+            <a href="{{ link.url }}" class="hoc-drawer__link">{{ link.title }}</a>
+          {%- endif -%}
         {%- endfor -%}
       </nav>
     {%- endif -%}

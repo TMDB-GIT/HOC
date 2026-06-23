@@ -1,12 +1,13 @@
 /* ==========================================================================
    HOUSE OF CLARENCE — hoc-type.css
    --------------------------------------------------------------------------
-   The three typographic "voices" (prd.md §4.2):
-     • Editorial serif  — Newsreader      — headlines, hero, category titles
-     • Functional body  — Hanken Grotesk  — body, nav, UI, buttons
-     • Technical mono    — IBM Plex Mono   — eyebrows, specs, prices, SKUs
+   Unified on a single typeface — Hanken Grotesk — across every role
+   (headlines, hero, body, nav, UI, buttons, eyebrows, specs, prices, SKUs).
+   The three role tokens (--hoc-font-display / -body / -mono) all resolve to
+   Hanken Grotesk in hoc-base.css; per-role size, weight, tracking and casing
+   still differentiate the voices.
 
-   The fonts themselves are loaded in layout/theme.liquid (Google Fonts).
+   The font itself is loaded in layout/theme.liquid (Google Fonts).
    If we ever self-host licensed fonts (Canela/Söhne tier), the @font-face
    rules would live here.
 

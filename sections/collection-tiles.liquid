@@ -16,6 +16,7 @@
   class="hoc-section hoc-collection-tiles hoc-roomscroll"
   data-room-scroll
   {% if pinned %}data-room-pinned="true"{% endif %}
+  {% if section.settings.snap %}data-room-snap="true"{% endif %}
   data-room-leadin="{{ section.settings.lead_in }}"
   data-room-leadout="{{ section.settings.lead_out }}"
 >
@@ -51,8 +52,33 @@
               if tile_url == blank and collection != blank
                 assign tile_url = collection.url
               endif
+              comment
+                Stable anchor for deep-linking from the nav (e.g. "Catalog → Bathroom"
+                points at /#room-bathroom). Prefer the collection handle when one is
+                attached, else derive a handle from the label. The room-scroll script
+                reads this on load / hashchange to glide to the matching room.
+              endcomment
+              if collection != blank
+                assign room_anchor = collection.handle
+              else
+                assign room_anchor = tile_label | handleize
+              endif
+              comment
+                A tile with no collection and a blank label would handleize to '',
+                giving a useless, non-unique id="room-". Fall back to the block's
+                position so every panel keeps a unique, resolvable anchor.
+              endcomment
+              if room_anchor == blank
+                assign room_anchor = forloop.index
+              endif
             -%}
-            <a href="{{ tile_url | default: routes.collections_url }}" class="hoc-roompanel" {{ block.shopify_attributes }}>
+            <a
+              id="room-{{ room_anchor }}"
+              href="{{ tile_url | default: routes.collections_url }}"
+              class="hoc-roompanel"
+              data-room-anchor
+              {{ block.shopify_attributes }}
+            >
               <span class="hoc-roompanel__media">
                 {%- if tile_image != blank -%}
                   <img
@@ -108,6 +134,13 @@
       "label": "Pin & scroll horizontally on desktop",
       "default": true,
       "info": "When on, the section holds in place and rooms move sideways as the visitor scrolls down (desktop only, respects reduced-motion). When off, rooms scroll horizontally on their own."
+    },
+    {
+      "type": "checkbox",
+      "id": "snap",
+      "label": "Settle on the nearest room",
+      "default": true,
+      "info": "When scrolling stops, the section gently glides so the closest room sits centred — the visitor never has to line one up by hand. Only applies while pinned (desktop, motion allowed)."
     },
     {
       "type": "range",

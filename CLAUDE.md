@@ -103,7 +103,7 @@ Mirror these in `settings_schema.json` so merchants can nudge the brand. Full ra
 }
 ```
 
-**Type roles:** display serif (Spectral/Newsreader — headlines, *never bold*, leading 1.05–1.1) · body grotesque (Hanken/Schibsted Grotesk — UI, leading 1.55, ~68ch) · mono (Spline Sans Mono/IBM Plex Mono — eyebrows, specs, prices, SKUs). Max 2 weights per family, `font-display: swap`, preload the 2 critical weights.
+**Type — unified on one family (client direction):** the whole site uses a single typeface, **Hanken Grotesk** (weights 400/500, `font-display: swap`). Per client request the brand runs one consistent font everywhere rather than a serif/grotesque/mono mix. The three role tokens are retained so layout intent stays legible and a future multi-family revival is a token-only change — but they all currently resolve to the body family: `--hoc-font-display` and `--hoc-font-mono` both `= var(--hoc-font-body)` (see `assets/hoc-base.css`). Role usage by *style*, not family: headlines large with tight leading 1.05–1.1 (*never bold*); body leading 1.55, ~68ch; eyebrows/specs/prices/SKUs UPPERCASE with +0.08em tracking. Earlier draft intent (display serif Spectral/Newsreader · mono Spline Sans Mono/IBM Plex Mono) is superseded.
 
 **Usage discipline:** `--hoc-canvas` default page · `--hoc-paper` detail surfaces · `--hoc-sage` (with canvas text) for single drama sections + footer. Brass only on hairlines/hover/active/focus — never large fills or gradients. AA contrast everywhere; `--hoc-stone` for captions only.
 
@@ -132,4 +132,4 @@ Foundation (tokens, type, header/footer) → Components → Home → Collection+
 
 ## Open decisions (PRD §12 — need human input before locking)
 
-Logo artwork/colourways (tune `--hoc-ink`/`--hoc-sage` to match) · licensed vs free fonts · final catalogue taxonomy (rooms/types) · sharing for Ideabook · Trade at v1? · how prominently to surface Market Design & Build · confirm zero sale UI ever.
+Logo artwork/colourways (tune `--hoc-ink`/`--hoc-sage` to match) · ~~licensed vs free fonts~~ **(decided: one font site-wide — Hanken Grotesk, free/Google Fonts; see Type roles above)** · final catalogue taxonomy (rooms/types) · sharing for Ideabook · Trade at v1? · how prominently to surface Market Design & Build · confirm zero sale UI ever.
